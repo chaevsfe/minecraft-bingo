@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "place_creaking_heart_awake": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "place_creaking_heart_dormant": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "place_pale_oak_log": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.adventure.heart_transplanter.description"
+    },
+    "icon": {
+      "id": "minecraft:creaking_heart"
+    },
+    "title": {
+      "translate": "advancements.adventure.heart_transplanter.title"
+    }
+  },
+  "requirements": [
+    [
+      "place_creaking_heart_dormant",
+      "place_creaking_heart_awake",
+      "place_pale_oak_log"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

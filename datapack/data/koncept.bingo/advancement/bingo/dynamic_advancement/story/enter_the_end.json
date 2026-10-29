@@ -1,0 +1,19 @@
+{
+  "criteria": {
+    "entered_end": {
+      "conditions": {
+        "to": "minecraft:the_end"
+      },
+      "trigger": "minecraft:changed_dimension"
+    }
+  },
+  "requirements": [
+    [
+      "entered_end"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/enter_the_end"
+  },
+  "sends_telemetry_event": true
+}

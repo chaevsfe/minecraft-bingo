@@ -1,0 +1,25 @@
+{
+  "criteria": {
+    "summoned": {
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:wither"
+          }
+        }
+      },
+      "trigger": "minecraft:summoned_entity"
+    }
+  },
+  "requirements": [
+    [
+      "summoned"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/summon_wither"
+  },
+  "sends_telemetry_event": true
+}

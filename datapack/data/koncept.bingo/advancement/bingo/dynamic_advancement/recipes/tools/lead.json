@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "has_string": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:string"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:lead"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_string"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/lead"
+  },
+  "sends_telemetry_event": true
+}

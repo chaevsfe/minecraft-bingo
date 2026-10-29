@@ -1,0 +1,41 @@
+{
+  "criteria": {
+    "has_nautilus_core": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:heart_of_the_sea"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_nautilus_shell": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:nautilus_shell"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:conduit"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_nautilus_core",
+      "has_nautilus_shell"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/conduit"
+  },
+  "sends_telemetry_event": true
+}

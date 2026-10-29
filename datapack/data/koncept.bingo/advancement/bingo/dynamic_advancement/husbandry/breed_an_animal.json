@@ -1,0 +1,16 @@
+{
+  "criteria": {
+    "bred": {
+      "trigger": "minecraft:bred_animals"
+    }
+  },
+  "requirements": [
+    [
+      "bred"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/breed_an_animal"
+  },
+  "sends_telemetry_event": true
+}

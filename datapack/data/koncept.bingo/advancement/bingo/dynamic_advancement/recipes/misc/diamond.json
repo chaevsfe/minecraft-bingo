@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "has_diamond_block": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:diamond_block"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:diamond"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_diamond_block"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/diamond"
+  },
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,2 @@
+# Project created by the koncept
+execute if score shaper_armor_trim_smithing_template bingo.restart.replay matches 1 run function koncept.bingo:bingo/advancement/advancement/shaper_armor_trim_smithing_template

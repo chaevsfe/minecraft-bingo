@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "has_cobbled_deepslate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:cobbled_deepslate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:cobbled_deepslate_wall"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cobbled_deepslate"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/cobbled_deepslate_wall"
+  },
+  "sends_telemetry_event": true
+}

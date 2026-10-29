@@ -1,0 +1,30 @@
+{
+  "parent": "minecraft:adventure/shoot_arrow",
+  "criteria": {
+    "bullseye": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.adventure.bullseye.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "id": "minecraft:target"
+    },
+    "title": {
+      "translate": "advancements.adventure.bullseye.title"
+    }
+  },
+  "requirements": [
+    [
+      "bullseye"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  },
+  "sends_telemetry_event": true
+}

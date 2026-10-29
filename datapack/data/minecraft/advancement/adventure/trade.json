@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "traded": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.adventure.trade.description"
+    },
+    "icon": {
+      "id": "minecraft:emerald"
+    },
+    "title": {
+      "translate": "advancements.adventure.trade.title"
+    }
+  },
+  "requirements": [
+    [
+      "traded"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

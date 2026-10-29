@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:adventure/spyglass_at_parrot",
+  "criteria": {
+    "spyglass_at_ghast": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.adventure.spyglass_at_ghast.description"
+    },
+    "icon": {
+      "id": "minecraft:spyglass"
+    },
+    "title": {
+      "translate": "advancements.adventure.spyglass_at_ghast.title"
+    }
+  },
+  "requirements": [
+    [
+      "spyglass_at_ghast"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

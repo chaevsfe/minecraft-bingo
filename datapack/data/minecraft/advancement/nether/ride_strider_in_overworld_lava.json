@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:nether/ride_strider",
+  "criteria": {
+    "ride_entity_distance": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.nether.ride_strider_in_overworld_lava.description"
+    },
+    "icon": {
+      "id": "minecraft:warped_fungus_on_a_stick"
+    },
+    "title": {
+      "translate": "advancements.nether.ride_strider_in_overworld_lava.title"
+    }
+  },
+  "requirements": [
+    [
+      "ride_entity_distance"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

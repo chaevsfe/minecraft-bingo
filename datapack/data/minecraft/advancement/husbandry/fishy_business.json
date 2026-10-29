@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:husbandry/root",
+  "criteria": {
+    "cod": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "pufferfish": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "salmon": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "tropical_fish": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.husbandry.fishy_business.description"
+    },
+    "icon": {
+      "id": "minecraft:fishing_rod"
+    },
+    "title": {
+      "translate": "advancements.husbandry.fishy_business.title"
+    }
+  },
+  "requirements": [
+    [
+      "cod",
+      "tropical_fish",
+      "pufferfish",
+      "salmon"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

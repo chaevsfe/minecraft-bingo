@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:husbandry/root",
+  "criteria": {
+    "silk_touch_nest": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.husbandry.silk_touch_nest.description"
+    },
+    "icon": {
+      "id": "minecraft:bee_nest"
+    },
+    "title": {
+      "translate": "advancements.husbandry.silk_touch_nest.title"
+    }
+  },
+  "requirements": [
+    [
+      "silk_touch_nest"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

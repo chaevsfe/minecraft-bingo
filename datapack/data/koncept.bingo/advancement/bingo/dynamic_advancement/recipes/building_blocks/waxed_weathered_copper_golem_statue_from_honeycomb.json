@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:waxed_weathered_copper_golem_statue_from_honeycomb"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_weathered_copper_golem_statue": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:weathered_copper_golem_statue"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_weathered_copper_golem_statue"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/waxed_weathered_copper_golem_statue_from_honeycomb"
+  },
+  "sends_telemetry_event": true
+}

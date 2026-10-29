@@ -1,0 +1,226 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "minecraft:blaze": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:bogged": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:breeze": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:camel_husk": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:cave_spider": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:creaking": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:creeper": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:drowned": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:elder_guardian": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:ender_dragon": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:enderman": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:endermite": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:evoker": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:ghast": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:guardian": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:hoglin": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:husk": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:magma_cube": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:parched": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:phantom": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:piglin": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:piglin_brute": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:pillager": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:ravager": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:shulker": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:silverfish": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:skeleton": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:slime": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:spider": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:stray": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:vex": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:vindicator": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:witch": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:wither": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:wither_skeleton": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:zoglin": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:zombie": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:zombie_horse": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:zombie_nautilus": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:zombie_villager": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:zombified_piglin": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.adventure.kill_a_mob.description"
+    },
+    "icon": {
+      "id": "minecraft:iron_sword"
+    },
+    "title": {
+      "translate": "advancements.adventure.kill_a_mob.title"
+    }
+  },
+  "requirements": [
+    [
+      "minecraft:blaze",
+      "minecraft:bogged",
+      "minecraft:breeze",
+      "minecraft:camel_husk",
+      "minecraft:cave_spider",
+      "minecraft:creaking",
+      "minecraft:creeper",
+      "minecraft:drowned",
+      "minecraft:elder_guardian",
+      "minecraft:ender_dragon",
+      "minecraft:enderman",
+      "minecraft:endermite",
+      "minecraft:evoker",
+      "minecraft:ghast",
+      "minecraft:guardian",
+      "minecraft:hoglin",
+      "minecraft:husk",
+      "minecraft:magma_cube",
+      "minecraft:parched",
+      "minecraft:phantom",
+      "minecraft:piglin",
+      "minecraft:piglin_brute",
+      "minecraft:pillager",
+      "minecraft:ravager",
+      "minecraft:shulker",
+      "minecraft:silverfish",
+      "minecraft:skeleton",
+      "minecraft:slime",
+      "minecraft:spider",
+      "minecraft:stray",
+      "minecraft:vex",
+      "minecraft:vindicator",
+      "minecraft:witch",
+      "minecraft:wither_skeleton",
+      "minecraft:wither",
+      "minecraft:zoglin",
+      "minecraft:zombie_villager",
+      "minecraft:zombie",
+      "minecraft:zombie_horse",
+      "minecraft:zombified_piglin",
+      "minecraft:zombie_nautilus"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

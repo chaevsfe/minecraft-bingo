@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "has_peony": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:peony"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:pink_dye_from_peony"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_peony"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/pink_dye_from_peony"
+  },
+  "sends_telemetry_event": true
+}

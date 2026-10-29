@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:nether/obtain_crying_obsidian",
+  "criteria": {
+    "charge_respawn_anchor": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.nether.charge_respawn_anchor.description"
+    },
+    "icon": {
+      "id": "minecraft:respawn_anchor"
+    },
+    "title": {
+      "translate": "advancements.nether.charge_respawn_anchor.title"
+    }
+  },
+  "requirements": [
+    [
+      "charge_respawn_anchor"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

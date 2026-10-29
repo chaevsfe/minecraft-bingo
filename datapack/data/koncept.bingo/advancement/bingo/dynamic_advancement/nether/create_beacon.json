@@ -1,0 +1,21 @@
+{
+  "criteria": {
+    "beacon": {
+      "conditions": {
+        "level": {
+          "min": 1
+        }
+      },
+      "trigger": "minecraft:construct_beacon"
+    }
+  },
+  "requirements": [
+    [
+      "beacon"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/create_beacon"
+  },
+  "sends_telemetry_event": true
+}

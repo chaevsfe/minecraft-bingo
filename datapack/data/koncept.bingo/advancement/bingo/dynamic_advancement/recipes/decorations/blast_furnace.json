@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "has_smooth_stone": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:smooth_stone"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:blast_furnace"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_smooth_stone"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/blast_furnace"
+  },
+  "sends_telemetry_event": true
+}

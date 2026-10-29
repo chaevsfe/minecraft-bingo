@@ -1,0 +1,12 @@
+# Project created by the koncept
+
+scoreboard players enable @a bingo.startYes
+
+scoreboard objectives remove bingo.started_game
+
+scoreboard players reset @s bingo.startYes
+#scoreboard objectives remove bingo.startYes
+
+scoreboard players set start bingo.start.enable.trigger 1
+
+execute unless score mod bingo.companion matches 1 run tellraw @s [{"translate":"bingo.team.select","color":"#ffcc64"},{"text":"\n"},{"translate":"bingo.quit.title","color":"red"},{"translate":"bingo.status.participate_yes","color":"#8CF657",click_event:{action:'run_command',command:"/trigger .bingo.leave.game"}},{"text":"\n"},{"text":"\n"},{"translate":"bingo.chat.color.red","color":"red"},{"text":" "},{"translate":"bingo.team.join",click_event:{action:'run_command',command:"/trigger bingo.team.join.red"}},{"text":"\n"},{"translate":"bingo.chat.color.dark_red","color":"dark_red"},{"text":" "},{"translate":"bingo.team.join",click_event:{action:'run_command',command:"/trigger bingo.team.join.dark_red"}},{"text":"\n"},{"translate":"bingo.chat.color.yellow","color":"yellow"},{"text":" "},{"translate":"bingo.team.join",click_event:{action:'run_command',command:"/trigger bingo.team.join.yellow"}},{"text":"\n"},{"translate":"bingo.chat.color.gold","color":"gold"},{"text":" "},{"translate":"bingo.team.join",click_event:{action:'run_command',command:"/trigger bingo.team.join.gold"}},{"text":"\n"},{"translate":"bingo.chat.color.white","color":"white"},{"text":" "},{"translate":"bingo.team.join",click_event:{action:'run_command',command:"/trigger bingo.team.join.white"}},{"text":"\n"},{"translate":"bingo.chat.color.aqua","color":"aqua"},{"text":" "},{"translate":"bingo.team.join",click_event:{action:'run_command',command:"/trigger bingo.team.join.aqua"}},{"text":"\n"},{"translate":"bingo.chat.color.green","color":"green"},{"text":" "},{"translate":"bingo.team.join",click_event:{action:'run_command',command:"/trigger bingo.team.join.green"}},{"text":"\n"},{"translate":"bingo.chat.color.blue","color":"blue"},{"text":" "},{"translate":"bingo.team.join",click_event:{action:'run_command',command:"/trigger bingo.team.join.blue"}},{"text":"\n"},{"translate":"bingo.chat.color.light_purple","color":"light_purple"},{"text":" "},{"translate":"bingo.team.join",click_event:{action:'run_command',command:"/trigger bingo.team.join.light_purple"}}]

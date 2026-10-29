@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:adventure/minecraft_trials_edition",
+  "criteria": {
+    "lighten_up": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.adventure.lighten_up.description"
+    },
+    "icon": {
+      "id": "minecraft:copper_bulb"
+    },
+    "title": {
+      "translate": "advancements.adventure.lighten_up.title"
+    }
+  },
+  "requirements": [
+    [
+      "lighten_up"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

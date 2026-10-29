@@ -1,0 +1,58 @@
+{
+  "parent": "minecraft:nether/ride_strider",
+  "criteria": {
+    "minecraft:basalt_deltas": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:crimson_forest": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:nether_wastes": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:soul_sand_valley": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:warped_forest": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.nether.explore_nether.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "id": "minecraft:netherite_boots"
+    },
+    "title": {
+      "translate": "advancements.nether.explore_nether.title"
+    }
+  },
+  "requirements": [
+    [
+      "minecraft:nether_wastes"
+    ],
+    [
+      "minecraft:soul_sand_valley"
+    ],
+    [
+      "minecraft:crimson_forest"
+    ],
+    [
+      "minecraft:warped_forest"
+    ],
+    [
+      "minecraft:basalt_deltas"
+    ]
+  ],
+  "rewards": {
+    "experience": 500
+  },
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,2 @@
+# Project created by the koncept
+$tellraw @a[tag=bingo.game.player,tag=!bingo.game.player.training] ["",{"translate":"bingo.settings.timer.notifications_$(x)",hover_event:{action:'show_text',value:{"translate":"bingo.settings.before_game_hint"}},"with":[{"translate":"bingo.settings.command","color":"#8CF657","click_event":{"action":"suggest_command","command":"/trigger .bingo.settings"},"hoverEvent":{"action":"show_text","value":[{"translate":"chat.copy"},{"text":"\ue001","font":"koncept:icon/unicode.bingo","color":"white"}]}}],"color":"#54beea"}]

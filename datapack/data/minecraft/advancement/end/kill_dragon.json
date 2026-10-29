@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:end/root",
+  "criteria": {
+    "killed_dragon": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.end.kill_dragon.description"
+    },
+    "icon": {
+      "id": "minecraft:dragon_head"
+    },
+    "title": {
+      "translate": "advancements.end.kill_dragon.title"
+    }
+  },
+  "requirements": [
+    [
+      "killed_dragon"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

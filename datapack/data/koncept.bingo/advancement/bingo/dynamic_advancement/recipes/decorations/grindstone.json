@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "has_stone_slab": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:stone_slab"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:grindstone"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_stone_slab"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/grindstone"
+  },
+  "sends_telemetry_event": true
+}

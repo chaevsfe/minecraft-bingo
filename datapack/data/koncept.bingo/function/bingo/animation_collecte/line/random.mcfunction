@@ -1,0 +1,2 @@
+$execute if score $an_$(x).cavalier bingo.selection.options matches 0 run return run function koncept.bingo:bingo/animation_collecte/line/$(x)
+function koncept.bingo:bingo/animation_collecte/random_line

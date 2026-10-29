@@ -1,0 +1,100 @@
+{
+  "parent": "minecraft:husbandry/tame_an_animal",
+  "criteria": {
+    "minecraft:all_black": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:black": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:british_shorthair": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:calico": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:jellie": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:persian": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:ragdoll": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:red": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:siamese": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:tabby": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:white": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.husbandry.complete_catalogue.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "id": "minecraft:cod"
+    },
+    "title": {
+      "translate": "advancements.husbandry.complete_catalogue.title"
+    }
+  },
+  "requirements": [
+    [
+      "minecraft:all_black"
+    ],
+    [
+      "minecraft:black"
+    ],
+    [
+      "minecraft:british_shorthair"
+    ],
+    [
+      "minecraft:calico"
+    ],
+    [
+      "minecraft:jellie"
+    ],
+    [
+      "minecraft:persian"
+    ],
+    [
+      "minecraft:ragdoll"
+    ],
+    [
+      "minecraft:red"
+    ],
+    [
+      "minecraft:siamese"
+    ],
+    [
+      "minecraft:tabby"
+    ],
+    [
+      "minecraft:white"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  },
+  "sends_telemetry_event": true
+}

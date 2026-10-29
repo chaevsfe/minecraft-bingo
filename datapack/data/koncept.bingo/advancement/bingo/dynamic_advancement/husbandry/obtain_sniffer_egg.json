@@ -1,0 +1,23 @@
+{
+  "criteria": {
+    "obtain_sniffer_egg": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:sniffer_egg"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_sniffer_egg"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/obtain_sniffer_egg"
+  },
+  "sends_telemetry_event": true
+}

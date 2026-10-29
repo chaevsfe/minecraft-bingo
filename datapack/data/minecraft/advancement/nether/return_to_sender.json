@@ -1,0 +1,30 @@
+{
+  "parent": "minecraft:nether/root",
+  "criteria": {
+    "killed_ghast": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.nether.return_to_sender.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "id": "minecraft:fire_charge"
+    },
+    "title": {
+      "translate": "advancements.nether.return_to_sender.title"
+    }
+  },
+  "requirements": [
+    [
+      "killed_ghast"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  },
+  "sends_telemetry_event": true
+}

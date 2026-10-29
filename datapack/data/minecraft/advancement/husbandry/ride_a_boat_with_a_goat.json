@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:husbandry/root",
+  "criteria": {
+    "ride_a_boat_with_a_goat": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.husbandry.ride_a_boat_with_a_goat.description"
+    },
+    "icon": {
+      "id": "minecraft:oak_boat"
+    },
+    "title": {
+      "translate": "advancements.husbandry.ride_a_boat_with_a_goat.title"
+    }
+  },
+  "requirements": [
+    [
+      "ride_a_boat_with_a_goat"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

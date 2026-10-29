@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "has_mangrove_roots": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:mangrove_roots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:muddy_mangrove_roots"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mangrove_roots"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/muddy_mangrove_roots"
+  },
+  "sends_telemetry_event": true
+}

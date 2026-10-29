@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:orange_dye_from_torchflower"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_torchflower": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:torchflower"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_torchflower"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/orange_dye_from_torchflower"
+  },
+  "sends_telemetry_event": true
+}

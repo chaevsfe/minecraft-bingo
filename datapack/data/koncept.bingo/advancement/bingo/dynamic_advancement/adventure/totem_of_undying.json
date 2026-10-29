@@ -1,0 +1,21 @@
+{
+  "criteria": {
+    "used_totem": {
+      "conditions": {
+        "item": {
+          "items": "minecraft:totem_of_undying"
+        }
+      },
+      "trigger": "minecraft:used_totem"
+    }
+  },
+  "requirements": [
+    [
+      "used_totem"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/totem_of_undying"
+  },
+  "sends_telemetry_event": true
+}

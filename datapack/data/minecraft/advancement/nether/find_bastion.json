@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:nether/root",
+  "criteria": {
+    "bastion": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.nether.find_bastion.description"
+    },
+    "icon": {
+      "id": "minecraft:polished_blackstone_bricks"
+    },
+    "title": {
+      "translate": "advancements.nether.find_bastion.title"
+    }
+  },
+  "requirements": [
+    [
+      "bastion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

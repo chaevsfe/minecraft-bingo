@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:adventure/ol_betsy",
+  "criteria": {
+    "kill_pillager": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.adventure.whos_the_pillager_now.description"
+    },
+    "icon": {
+      "id": "minecraft:crossbow"
+    },
+    "title": {
+      "translate": "advancements.adventure.whos_the_pillager_now.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_pillager"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

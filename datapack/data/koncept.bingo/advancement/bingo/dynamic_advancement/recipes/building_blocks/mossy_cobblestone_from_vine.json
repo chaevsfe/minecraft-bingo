@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:mossy_cobblestone_from_vine"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_vine": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:vine"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_vine"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/mossy_cobblestone_from_vine"
+  },
+  "sends_telemetry_event": true
+}

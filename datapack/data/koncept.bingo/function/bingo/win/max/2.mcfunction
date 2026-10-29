@@ -1,0 +1,3 @@
+$data modify storage bingo_list_player_win:data text set value '{object:"player",player:{id:$(uuid)},shadow_color:0,"color":"white",hover_event:{action:"show_text",value:{"translate":"bingo.count.object","color":"#ffcc64","with":[{"score":{"name":"@a[nbt={UUID:$(uuid)},limit=1]","objective":"bingo.count.object"}}]}}},{"text":" "},{"selector":"@a[nbt={UUID:$(uuid)}]",hover_event:{action:"show_text",value:{"translate":"bingo.count.object","color":"#ffcc64","with":[{"score":{"name":"@a[nbt={UUID:$(uuid)},limit=1]","objective":"bingo.count.object"}}]}}}'
+
+function koncept.bingo:bingo/win/max/3 with storage bingo_list_player_win:data

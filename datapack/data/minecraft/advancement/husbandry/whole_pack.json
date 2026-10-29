@@ -1,0 +1,86 @@
+{
+  "parent": "minecraft:husbandry/tame_an_animal",
+  "criteria": {
+    "minecraft:ashen": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:black": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:chestnut": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:pale": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:rusty": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:snowy": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:spotted": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:striped": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "minecraft:woods": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.husbandry.whole_pack.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "id": "minecraft:bone"
+    },
+    "title": {
+      "translate": "advancements.husbandry.whole_pack.title"
+    }
+  },
+  "requirements": [
+    [
+      "minecraft:ashen"
+    ],
+    [
+      "minecraft:black"
+    ],
+    [
+      "minecraft:chestnut"
+    ],
+    [
+      "minecraft:pale"
+    ],
+    [
+      "minecraft:rusty"
+    ],
+    [
+      "minecraft:snowy"
+    ],
+    [
+      "minecraft:spotted"
+    ],
+    [
+      "minecraft:striped"
+    ],
+    [
+      "minecraft:woods"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  },
+  "sends_telemetry_event": true
+}

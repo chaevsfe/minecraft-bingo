@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "honey_block_slide": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.adventure.honey_block_slide.description"
+    },
+    "icon": {
+      "id": "minecraft:honey_block"
+    },
+    "title": {
+      "translate": "advancements.adventure.honey_block_slide.title"
+    }
+  },
+  "requirements": [
+    [
+      "honey_block_slide"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

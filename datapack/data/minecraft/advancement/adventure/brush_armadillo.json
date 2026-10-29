@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "brush_armadillo": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.adventure.brush_armadillo.description"
+    },
+    "icon": {
+      "id": "minecraft:armadillo_scute"
+    },
+    "title": {
+      "translate": "advancements.adventure.brush_armadillo.title"
+    }
+  },
+  "requirements": [
+    [
+      "brush_armadillo"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "bingo_companion",
+  "version": "${version}",
+  "name": "Bingo Companion",
+  "description": "Server-side /bingo command and chest menus for koncept's Bingo Quest datapack. Vanilla clients.",
+  "authors": [
+    "chaevsfe"
+  ],
+  "license": "LGPL-3.0",
+  "contact": {
+    "homepage": "https://github.com/chaevsfe/minecraft-bingo",
+    "sources": "https://github.com/chaevsfe/minecraft-bingo",
+    "issues": "https://github.com/chaevsfe/minecraft-bingo/issues"
+  },
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.chaevsfe.bingocompanion.BingoCompanion"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.20.1",
+    "minecraft": "~26.3",
+    "fabric-command-api-v2": "*",
+    "fabric-lifecycle-events-v1": "*"
+  }
+}

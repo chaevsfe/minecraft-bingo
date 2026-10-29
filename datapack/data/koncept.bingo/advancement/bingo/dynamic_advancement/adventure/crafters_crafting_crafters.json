@@ -1,0 +1,19 @@
+{
+  "criteria": {
+    "crafter_crafted_crafter": {
+      "conditions": {
+        "recipes": "minecraft:crafter"
+      },
+      "trigger": "minecraft:crafter_recipe_crafted"
+    }
+  },
+  "requirements": [
+    [
+      "crafter_crafted_crafter"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/crafters_crafting_crafters"
+  },
+  "sends_telemetry_event": true
+}

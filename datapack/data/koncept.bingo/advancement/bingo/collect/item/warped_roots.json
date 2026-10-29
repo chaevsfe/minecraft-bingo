@@ -1,0 +1,22 @@
+{
+	"credit": " Made by koncept",
+    "criteria": {
+        "1": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "count": {
+                            "min": 1,
+                            "max": 64
+                        },
+                        "items": ["minecraft:warped_roots"]
+                    }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "function": "koncept.bingo:bingo/advancement/warped_roots"
+    }
+}

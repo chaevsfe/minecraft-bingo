@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:husbandry/root",
+  "criteria": {
+    "place_dried_ghast_in_water": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.husbandry.place_dried_ghast_in_water.description"
+    },
+    "icon": {
+      "id": "minecraft:dried_ghast"
+    },
+    "title": {
+      "translate": "advancements.husbandry.place_dried_ghast_in_water.title"
+    }
+  },
+  "requirements": [
+    [
+      "place_dried_ghast_in_water"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

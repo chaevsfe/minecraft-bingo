@@ -1,0 +1,60 @@
+{
+    "providers": [
+        {
+            "type": "bitmap",
+            "file": "koncept:hint/mouse.png",
+            "ascent": 8,
+            "height": 9,
+            "chars": ["\u0001"]
+        },
+        {
+            "type": "bitmap",
+            "file": "koncept:hint/click.png",
+            "ascent": 7,
+            "height": 7,
+            "chars": ["\u0004"]
+        },
+        {
+            "type": "bitmap",
+            "file": "koncept:vote_card/line.png",
+            "ascent": 64,
+            "height": 64,
+            "chars": ["\u0005"]
+        },
+        {
+            "type": "bitmap",
+            "file": "koncept:vote_card/cross.png",
+            "ascent": 64,
+            "height": 64,
+            "chars": ["\u0006"]
+        },
+        {
+            "type": "bitmap",
+            "file": "koncept:vote_card/full_house.png",
+            "ascent": 64,
+            "height": 64,
+            "chars": ["\u0007"]
+        },
+        {
+            "type": "bitmap",
+            "file": "koncept:vote_card/standart.png",
+            "ascent": 64,
+            "height": 64,
+            "chars": ["\u0008"]
+        },
+        {
+            "type": "bitmap",
+            "file": "koncept:vote_card/difficult.png",
+            "ascent": 64,
+            "height": 64,
+            "chars": ["\u0009"]
+        },
+        {
+            "type": "bitmap",
+            "file": "koncept:vote_card/hard.png",
+            "ascent": 64,
+            "height": 64,
+            "chars": ["\u0010"]
+		}
+	]
+}

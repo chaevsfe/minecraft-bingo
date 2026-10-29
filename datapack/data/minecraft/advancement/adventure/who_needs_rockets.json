@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:adventure/minecraft_trials_edition",
+  "criteria": {
+    "who_needs_rockets": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.adventure.who_needs_rockets.description"
+    },
+    "icon": {
+      "id": "minecraft:wind_charge"
+    },
+    "title": {
+      "translate": "advancements.adventure.who_needs_rockets.title"
+    }
+  },
+  "requirements": [
+    [
+      "who_needs_rockets"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

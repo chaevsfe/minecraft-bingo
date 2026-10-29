@@ -1,0 +1,17 @@
+{
+  "pack": {
+    "description": [
+      {
+        "text": "by koncept",
+        "color": "green"
+      },
+      "\n",
+      {
+        "text": "26.3 port",
+        "color": "green"
+      }
+    ],
+    "min_format": 97,
+    "max_format": 97
+  }
+}

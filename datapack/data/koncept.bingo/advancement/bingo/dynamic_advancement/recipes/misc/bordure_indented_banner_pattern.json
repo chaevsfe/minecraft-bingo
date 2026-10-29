@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:bordure_indented_banner_pattern"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_vines": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:vine"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_vines"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/bordure_indented_banner_pattern"
+  },
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,7 @@
+# Project created by the koncept
+
+scoreboard players reset @s bingo.team.join.light_purple
+
+team join light_purple.bingo @s
+
+execute as @s[tag=!bingo.game.player] at @s run function koncept.bingo:bingo/start/team_join/count_player_bingo

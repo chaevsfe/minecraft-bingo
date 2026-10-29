@@ -1,0 +1,9 @@
+$execute as @s[team=gold.bingo] at @s run function koncept.bingo:bingo/bossbar/file_selection/size_h$(sz)/gold with storage minecraft:bingo.macro
+$execute as @s[team=green.bingo] at @s run function koncept.bingo:bingo/bossbar/file_selection/size_h$(sz)/green with storage minecraft:bingo.macro
+$execute as @s[team=aqua.bingo] at @s run function koncept.bingo:bingo/bossbar/file_selection/size_h$(sz)/aqua with storage minecraft:bingo.macro
+$execute as @s[team=blue.bingo] at @s run function koncept.bingo:bingo/bossbar/file_selection/size_h$(sz)/blue with storage minecraft:bingo.macro
+$execute as @s[team=dark_red.bingo] at @s run function koncept.bingo:bingo/bossbar/file_selection/size_h$(sz)/dark_red with storage minecraft:bingo.macro
+$execute as @s[team=light_purple.bingo] at @s run function koncept.bingo:bingo/bossbar/file_selection/size_h$(sz)/light_purple with storage minecraft:bingo.macro
+$execute as @s[team=red.bingo] at @s run function koncept.bingo:bingo/bossbar/file_selection/size_h$(sz)/red with storage minecraft:bingo.macro
+$execute as @s[team=white.bingo] at @s run function koncept.bingo:bingo/bossbar/file_selection/size_h$(sz)/white with storage minecraft:bingo.macro
+$execute as @s[team=yellow.bingo] at @s run function koncept.bingo:bingo/bossbar/file_selection/size_h$(sz)/yellow with storage minecraft:bingo.macro

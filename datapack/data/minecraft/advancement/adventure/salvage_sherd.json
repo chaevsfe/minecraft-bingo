@@ -1,0 +1,58 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "desert_pyramid": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "desert_well": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "has_sherd": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "ocean_ruin_cold": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "ocean_ruin_warm": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "trail_ruins_common": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    },
+    "trail_ruins_rare": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.adventure.salvage_sherd.description"
+    },
+    "icon": {
+      "id": "minecraft:brush"
+    },
+    "title": {
+      "translate": "advancements.adventure.salvage_sherd.title"
+    }
+  },
+  "requirements": [
+    [
+      "desert_pyramid",
+      "desert_well",
+      "ocean_ruin_cold",
+      "ocean_ruin_warm",
+      "trail_ruins_rare",
+      "trail_ruins_common"
+    ],
+    [
+      "has_sherd"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

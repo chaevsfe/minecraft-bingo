@@ -1,0 +1,16 @@
+{
+  "criteria": {
+    "slept_in_bed": {
+      "trigger": "minecraft:slept_in_bed"
+    }
+  },
+  "requirements": [
+    [
+      "slept_in_bed"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/sleep_in_bed"
+  },
+  "sends_telemetry_event": true
+}

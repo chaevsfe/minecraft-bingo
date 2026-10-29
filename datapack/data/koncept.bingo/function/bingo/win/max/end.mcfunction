@@ -1,0 +1,1 @@
+$tellraw @a[tag=bingo.game.player] [{"translate":"bingo.status.team_win","with":[{"translate":"bingo.chat.color.$(team_color)","color":"$(team_color)"}]},{"text":" "},$(text_temp)]

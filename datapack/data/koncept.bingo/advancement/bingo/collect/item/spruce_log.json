@@ -1,0 +1,22 @@
+{
+	"credit": " Made by koncept",
+    "criteria": {
+        "1": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "count": {
+                            "min": 1,
+                            "max": 64
+                        },
+                        "items": ["minecraft:spruce_log"]
+                    }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "function": "koncept.bingo:bingo/advancement/spruce_log"
+    }
+}

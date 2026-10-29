@@ -1,0 +1,21 @@
+{
+  "criteria": {
+    "axolotl_bucket": {
+      "conditions": {
+        "item": {
+          "items": "minecraft:axolotl_bucket"
+        }
+      },
+      "trigger": "minecraft:filled_bucket"
+    }
+  },
+  "requirements": [
+    [
+      "axolotl_bucket"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/axolotl_in_a_bucket"
+  },
+  "sends_telemetry_event": true
+}

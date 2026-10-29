@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "minecraft:polished_tuff"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_tuff": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:tuff"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_tuff"
+    ]
+  ],
+  "rewards": {
+    "function": "koncept.bingo:bingo/dynamic_advancement/polished_tuff"
+  },
+  "sends_telemetry_event": true
+}

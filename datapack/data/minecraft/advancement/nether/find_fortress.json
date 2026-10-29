@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:nether/root",
+  "criteria": {
+    "fortress": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.nether.find_fortress.description"
+    },
+    "icon": {
+      "id": "minecraft:nether_bricks"
+    },
+    "title": {
+      "translate": "advancements.nether.find_fortress.title"
+    }
+  },
+  "requirements": [
+    [
+      "fortress"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:husbandry/safely_harvest_honey",
+  "criteria": {
+    "wax_on": {
+      "trigger": "minecraft:impossible",
+      "conditions": {}
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.husbandry.wax_on.description"
+    },
+    "icon": {
+      "id": "minecraft:honeycomb"
+    },
+    "title": {
+      "translate": "advancements.husbandry.wax_on.title"
+    }
+  },
+  "requirements": [
+    [
+      "wax_on"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
