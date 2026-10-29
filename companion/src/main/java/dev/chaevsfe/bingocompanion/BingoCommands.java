@@ -1,9 +1,18 @@
 package dev.chaevsfe.bingocompanion;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,9 +27,7 @@ final class BingoCommands {
     static void register(CommandDispatcher<CommandSourceStack> dispatcher, Config.Role role) {
         if (role == Config.Role.VANILLA) {
             dispatcher.register(Commands.literal("bingo")
-                    .then(Commands.literal("send")
-                            .requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
-                            .executes(c -> Transfer.send(c.getSource(), Transfer.BINGO))));
+                    .then(transfer("send", Transfer.BINGO)));
             return;
         }
         dispatcher.register(Commands.literal("bingo")
@@ -36,9 +43,40 @@ final class BingoCommands {
                 .then(Commands.literal("reset")
                         .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .executes(c -> reset(c.getSource())))
-                .then(Commands.literal("return")
-                        .requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
-                        .executes(c -> Transfer.send(c.getSource(), Transfer.VANILLA))));
+                .then(transfer("return", Transfer.VANILLA)));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> transfer(String name, String key) {
+        return Commands.literal(name)
+                .requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
+                .executes(c -> Transfer.send(c.getSource(), key, null))
+                .then(Commands.argument("players", StringArgumentType.greedyString())
+                        .suggests(BingoCommands::suggestPlayers)
+                        .executes(c -> Transfer.send(c.getSource(), key, StringArgumentType.getString(c, "players"))));
+    }
+
+    private static CompletableFuture<Suggestions> suggestPlayers(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
+        String remaining = builder.getRemaining();
+        int cut = 0;
+        int depth = 0;
+        for (int i = 0; i < remaining.length(); i++) {
+            char c = remaining.charAt(i);
+            if (c == '[') {
+                depth++;
+            } else if (c == ']' && depth > 0) {
+                depth--;
+            } else if (depth == 0 && (c == ',' || Character.isWhitespace(c))) {
+                cut = i + 1;
+            }
+        }
+        StringReader reader = new StringReader(builder.getInput());
+        reader.setCursor(builder.getStart() + cut);
+        EntitySelectorParser parser = new EntitySelectorParser(reader, true);
+        try {
+            parser.parse();
+        } catch (CommandSyntaxException ignored) {
+        }
+        return parser.fillSuggestions(builder.createOffset(builder.getStart() + cut), b -> SharedSuggestionProvider.suggest(context.getSource().getOnlinePlayerNames(), b));
     }
 
     private static int fail(CommandSourceStack source, String message) {

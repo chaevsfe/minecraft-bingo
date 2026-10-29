@@ -67,9 +67,10 @@ final class Config {
         for (String key : new String[] {Transfer.BINGO, Transfer.VANILLA}) {
             JsonObject entry = new JsonObject();
             entry.addProperty("host", "");
-            entry.addProperty("port", 25565);
+            entry.addProperty("port", Transfer.DEFAULT_PORT);
             root.add(key, entry);
         }
+        root.addProperty("wake_timeout", Transfer.DEFAULT_TIMEOUT);
         return new GsonBuilder().setPrettyPrinting().create().toJson(root) + "\n";
     }
 }

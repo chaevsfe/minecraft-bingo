@@ -15,6 +15,8 @@ public final class BingoCompanion implements ModInitializer {
         Config.Role role = Config.role();
         LOGGER.info("Bingo Companion role: {}", role.name().toLowerCase());
         CommandRegistrationCallback.EVENT.register((dispatcher, context, selection) -> BingoCommands.register(dispatcher, role));
+        ServerLifecycleEvents.SERVER_STOPPING.register(Wake::cancel);
+        ServerTickEvents.END_SERVER_TICK.register(Wake::tick);
         if (role != Config.Role.BINGO) {
             return;
         }
