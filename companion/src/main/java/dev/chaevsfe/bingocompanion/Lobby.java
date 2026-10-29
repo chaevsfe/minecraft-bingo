@@ -36,6 +36,7 @@ final class Lobby {
     private static UUID startRequest;
     private static boolean wasOpen;
     private static boolean announced;
+    private static int pausedAt = -1;
 
     private Lobby() {
     }
@@ -101,6 +102,42 @@ final class Lobby {
         return true;
     }
 
+    static boolean paused() {
+        return pausedAt >= 0;
+    }
+
+    static void togglePause(ServerPlayer player) {
+        MinecraftServer server = Datapack.server(player);
+        if (!Datapack.lobby(server)) {
+            Datapack.tell(player, closedReason(player));
+            return;
+        }
+        OptionalInt timer = Datapack.lobbyTimer(server);
+        String blocker = countdownBlocker(timer);
+        if (blocker != null) {
+            Datapack.tell(player, blocker);
+            return;
+        }
+        pausedAt = pausedAt >= 0 ? -1 : Math.max(2, timer.getAsInt());
+        for (ServerPlayer other : server.getPlayerList().getPlayers()) {
+            if (other.containerMenu instanceof LobbyMenu) {
+                TriggerQueue.markDirty(other);
+            }
+        }
+    }
+
+    private static void holdPause(MinecraftServer server, Scoreboard scoreboard) {
+        if (pausedAt < 0) {
+            return;
+        }
+        OptionalInt timer = Datapack.lobbyTimer(server);
+        if (timer.isEmpty() || timer.getAsInt() >= Datapack.EARLY_END) {
+            pausedAt = -1;
+            return;
+        }
+        scoreboard.getOrCreatePlayerScore(Datapack.TIMER_HOLDER, scoreboard.getObjective(Datapack.TIMER)).set(pausedAt - 1);
+    }
+
     static void requestStart(ServerPlayer op) {
         if (!Datapack.isOp(op)) {
             return;
@@ -132,6 +169,7 @@ final class Lobby {
                 scoreboard.getOrCreatePlayerScore(Datapack.SECONDS_HOLDER, scoreboard.getObjective(Datapack.COMPANION)).set(seconds);
             }
         }
+        holdPause(server, scoreboard);
     }
 
     private static void assertFlag(Scoreboard scoreboard) {
@@ -187,6 +225,9 @@ final class Lobby {
             }
             if (wasOpen) {
                 reset();
+                if (Datapack.running(server)) {
+                    Hint.dealt(server);
+                }
             }
             wasOpen = false;
             return;
@@ -217,6 +258,12 @@ final class Lobby {
         READY.clear();
         announced = false;
         startRequest = null;
+        pausedAt = -1;
+    }
+
+    static void clear(MinecraftServer server) {
+        reset();
+        wasOpen = false;
     }
 
     static Component announcement(String starter) {

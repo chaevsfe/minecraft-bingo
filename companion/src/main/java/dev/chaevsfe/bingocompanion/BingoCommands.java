@@ -31,7 +31,7 @@ final class BingoCommands {
             return;
         }
         dispatcher.register(Commands.literal("bingo")
-                .executes(c -> openSettings(c.getSource()))
+                .executes(c -> openDefault(c.getSource()))
                 .then(Commands.literal("settings")
                         .executes(c -> openSettings(c.getSource())))
                 .then(Commands.literal("card")
@@ -82,6 +82,26 @@ final class BingoCommands {
     private static int fail(CommandSourceStack source, String message) {
         source.sendFailure(Component.literal(message));
         return 0;
+    }
+
+    private static int openDefault(CommandSourceStack source) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        MinecraftServer server = source.getServer();
+        if (!Datapack.packLoaded(server)) {
+            return fail(source, NOT_LOADED);
+        }
+        if (Datapack.inGame(player) && Datapack.dealt(server)) {
+            SettingsMenu.open(player);
+            return 1;
+        }
+        if (Datapack.lobby(server)) {
+            return openLobby(source);
+        }
+        if (Datapack.running(server)) {
+            SettingsMenu.open(player);
+            return 1;
+        }
+        return start(source);
     }
 
     private static int openSettings(CommandSourceStack source) throws CommandSyntaxException {

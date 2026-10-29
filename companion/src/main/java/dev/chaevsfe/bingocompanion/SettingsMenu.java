@@ -26,6 +26,12 @@ final class SettingsMenu extends LockedMenu {
     private static final int SLOTS = 27;
     private static final int DEFAULT_SIZE = 16;
     private static final int HIDDEN = 2;
+    private static final int IDENTIFY = 7;
+    private static final int RULES = 8;
+    private static final int JOIN_LEAVE = 16;
+    private static final int CLEAR = 17;
+    private static final int TIME = 25;
+    private static final int CHAT_SETTINGS = 26;
 
     private boolean leaveMode;
 
@@ -66,29 +72,29 @@ final class SettingsMenu extends LockedMenu {
         stacks[2] = control(enabled, Items.DYE.lime(), 1, "Up 1", nowVertical(vertical));
         stacks[3] = control(enabled, Items.DYE.red(), 1, "Down 1", nowVertical(vertical));
         stacks[4] = control(enabled, Items.DYE.red(), 10, "Down 10", nowVertical(vertical));
-        stacks[6] = enabled
-                ? Icons.toggle(Items.CLOCK, TIME_LABEL + ": " + (shown ? "shown" : "hidden"), shown,
-                        shown ? "Click to hide the game clock" : "Click to show the game clock")
-                : Icons.disabled(TIME_LABEL, GAME_ONLY);
-        stacks[7] = Datapack.inGame(owner)
+        stacks[IDENTIFY] = Datapack.inGame(owner)
                 ? Icons.button(Items.SPYGLASS, IDENTIFY_LABEL, "Shows your Bingo card with real item names")
                 : Icons.disabled(IDENTIFY_LABEL, GAME_ONLY);
-        stacks[8] = Icons.button(Items.BOOK, RULES_LABEL, "Prints the rules in chat");
+        stacks[RULES] = Icons.button(Items.BOOK, RULES_LABEL, "Prints the rules in chat");
 
         stacks[9] = reset(enabled, "Reset horizontal", horizontal(space), "Back to centre (0)", "Positive = right");
         stacks[10] = control(enabled, Items.DYE.lightBlue(), 10, "Left 10", nowHorizontal(space));
         stacks[11] = control(enabled, Items.DYE.lightBlue(), 1, "Left 1", nowHorizontal(space));
         stacks[12] = control(enabled, Items.DYE.orange(), 1, "Right 1", nowHorizontal(space));
         stacks[13] = control(enabled, Items.DYE.orange(), 10, "Right 10", nowHorizontal(space));
-        stacks[15] = Datapack.chatSettings(owner)
-                ? Icons.button(Items.WRITABLE_BOOK, CHAT_SETTINGS_LABEL, "Prints the datapack's text menu in chat")
-                : Icons.disabled(CHAT_SETTINGS_LABEL, LEAVE_ONLY);
-        stacks[16] = joinOrLeave(server);
-        stacks[17] = control(enabled, Items.BRUSH, 1, CLEAR_LABEL, "Resets position and scale (not the timer)");
+        stacks[JOIN_LEAVE] = joinOrLeave(server);
+        stacks[CLEAR] = control(enabled, Items.BRUSH, 1, CLEAR_LABEL, "Resets position and scale (not the timer)");
 
         stacks[18] = reset(enabled, "Reset scale", size + " px", "Back to 16 px", "12 to 24 px, steps of 4");
         stacks[19] = control(enabled, Items.SMALL_AMETHYST_BUD, 1, "Smaller", "-4 px, min 12");
         stacks[20] = control(enabled, Items.AMETHYST_CLUSTER, 1, "Bigger", "+4 px, max 24");
+        stacks[TIME] = enabled
+                ? Icons.toggle(Items.CLOCK, TIME_LABEL + ": " + (shown ? "shown" : "hidden"), shown,
+                        shown ? "Click to hide the game clock" : "Click to show the game clock")
+                : Icons.disabled(TIME_LABEL, GAME_ONLY);
+        stacks[CHAT_SETTINGS] = Datapack.chatSettings(owner)
+                ? Icons.button(Items.WRITABLE_BOOK, CHAT_SETTINGS_LABEL, "Prints the datapack's text menu in chat")
+                : Icons.disabled(CHAT_SETTINGS_LABEL, LEAVE_ONLY);
 
         for (int slot = 0; slot < SLOTS; slot++) {
             put(slot, stacks[slot]);
@@ -135,15 +141,14 @@ final class SettingsMenu extends LockedMenu {
             case 2 -> setting(Datapack.UP_1);
             case 3 -> setting(Datapack.DOWN_1);
             case 4 -> setting(Datapack.DOWN_10);
-            case 6 -> setting(timeShown() ? Datapack.TIMER_HIDE : Datapack.TIMER_SHOW);
-            case 7 -> {
+            case IDENTIFY -> {
                 if (Datapack.inGame(owner)) {
                     TriggerQueue.navigate(owner, TriggerQueue.Nav.CARD);
                 } else {
                     deny(GAME_ONLY);
                 }
             }
-            case 8 -> {
+            case RULES -> {
                 TriggerQueue.enqueue(owner, Datapack.RULES, Datapack::always);
                 TriggerQueue.navigate(owner, TriggerQueue.Nav.CLOSE);
             }
@@ -152,7 +157,13 @@ final class SettingsMenu extends LockedMenu {
             case 11 -> setting(Datapack.LEFT_1);
             case 12 -> setting(Datapack.RIGHT_1);
             case 13 -> setting(Datapack.RIGHT_10);
-            case 15 -> {
+            case JOIN_LEAVE -> pressJoinOrLeave();
+            case CLEAR -> setting(Datapack.CLEAR_SETTINGS);
+            case 18 -> setting(Datapack.SCALE_RESET);
+            case 19 -> setting(Datapack.SMALLER);
+            case 20 -> setting(Datapack.BIGGER);
+            case TIME -> setting(timeShown() ? Datapack.TIMER_HIDE : Datapack.TIMER_SHOW);
+            case CHAT_SETTINGS -> {
                 if (Datapack.chatSettings(owner)) {
                     TriggerQueue.enqueue(owner, Datapack.CHAT_SETTINGS, Datapack::chatSettings);
                     TriggerQueue.navigate(owner, TriggerQueue.Nav.CLOSE);
@@ -160,11 +171,6 @@ final class SettingsMenu extends LockedMenu {
                     deny(LEAVE_ONLY);
                 }
             }
-            case 16 -> pressJoinOrLeave();
-            case 17 -> setting(Datapack.CLEAR_SETTINGS);
-            case 18 -> setting(Datapack.SCALE_RESET);
-            case 19 -> setting(Datapack.SMALLER);
-            case 20 -> setting(Datapack.BIGGER);
             default -> {
             }
         }

@@ -22,6 +22,7 @@ final class TriggerQueue {
     enum Nav {
         CLOSE,
         CARD,
+        SETTINGS,
         LOBBY_TEAMS,
         LOBBY_MODE,
         LOBBY_DIFFICULTY
@@ -145,6 +146,7 @@ final class TriggerQueue {
                         Datapack.tell(player, SettingsMenu.GAME_ONLY);
                     }
                 }
+                case SETTINGS -> SettingsMenu.open(player);
                 case LOBBY_TEAMS -> openLobby(player, LobbyMenu.Page.TEAMS);
                 case LOBBY_MODE -> openLobby(player, LobbyMenu.Page.MODE);
                 case LOBBY_DIFFICULTY -> openLobby(player, LobbyMenu.Page.DIFFICULTY);

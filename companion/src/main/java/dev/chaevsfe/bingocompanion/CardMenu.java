@@ -6,9 +6,12 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
@@ -22,6 +25,8 @@ import net.minecraft.world.item.component.ItemLore;
 
 final class CardMenu extends LockedMenu {
     private static final String TITLE = "Bingo Card";
+    private static final String RESULT_KEY = "bingo.list.check.result";
+    private static final String RESULT_FALLBACK = "This is ";
     private static final int SLOTS = 54;
     private static final int TEAM = 49;
 
@@ -68,6 +73,9 @@ final class CardMenu extends LockedMenu {
     protected void onButton(int slot, int button) {
         int cell = cellAt(slot);
         if (cell == 0) {
+            if (slot == TEAM) {
+                TriggerQueue.navigate(owner, TriggerQueue.Nav.SETTINGS);
+            }
             return;
         }
         if (!Datapack.inGame(owner)) {
@@ -75,7 +83,10 @@ final class CardMenu extends LockedMenu {
         } else if (!Datapack.nameCheck(owner, cell)) {
             deny("Not dealt yet");
         } else {
-            TriggerQueue.enqueue(owner, Datapack.NAME_CHECK + cell, player -> Datapack.nameCheck(player, cell));
+            String key = Datapack.translationKey(server(), cell);
+            Component name = key.isEmpty() ? Component.literal(Datapack.objectId(server(), cell)) : Component.translatable(key);
+            owner.sendSystemMessage(Component.translatableWithFallback(RESULT_KEY, RESULT_FALLBACK).withColor(Icons.TEXT_COLOR).append(name.copy().withColor(Icons.TEXT_COLOR)));
+            owner.connection.send(new ClientboundSoundPacket(SoundEvents.UI_BUTTON_CLICK, SoundSource.MASTER, owner.getX(), owner.getY(), owner.getZ(), 1.0F, 1.0F, owner.getRandom().nextLong()));
         }
     }
 

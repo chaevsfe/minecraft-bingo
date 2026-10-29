@@ -41,12 +41,12 @@ execute as @s[tag=bingo.actionbar.bottom,scores={bottom.gui.Scale=5}] at @s run 
 execute as @s[tag=bingo.actionbar.bottom,scores={bottom.gui.Scale=6}] at @s run data modify storage minecraft:bingo.macro height set value "top"
 execute as @s[tag=bingo.actionbar.top] at @s run data modify storage minecraft:bingo.macro height set value "top"
 
-execute as @s[team=gold.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/gold with storage minecraft:bingo.macro
-execute as @s[team=green.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/green with storage minecraft:bingo.macro
-execute as @s[team=aqua.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/aqua with storage minecraft:bingo.macro
-execute as @s[team=blue.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/blue with storage minecraft:bingo.macro
-execute as @s[team=dark_red.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/dark_red with storage minecraft:bingo.macro
-execute as @s[team=light_purple.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/light_purple with storage minecraft:bingo.macro
-execute as @s[team=red.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/red with storage minecraft:bingo.macro
-execute as @s[team=white.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/white with storage minecraft:bingo.macro
-execute as @s[team=yellow.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/yellow with storage minecraft:bingo.macro
+execute unless score mod bingo.companion matches 1 as @s[team=gold.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/gold with storage minecraft:bingo.macro
+execute unless score mod bingo.companion matches 1 as @s[team=green.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/green with storage minecraft:bingo.macro
+execute unless score mod bingo.companion matches 1 as @s[team=aqua.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/aqua with storage minecraft:bingo.macro
+execute unless score mod bingo.companion matches 1 as @s[team=blue.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/blue with storage minecraft:bingo.macro
+execute unless score mod bingo.companion matches 1 as @s[team=dark_red.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/dark_red with storage minecraft:bingo.macro
+execute unless score mod bingo.companion matches 1 as @s[team=light_purple.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/light_purple with storage minecraft:bingo.macro
+execute unless score mod bingo.companion matches 1 as @s[team=red.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/red with storage minecraft:bingo.macro
+execute unless score mod bingo.companion matches 1 as @s[team=white.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/white with storage minecraft:bingo.macro
+execute unless score mod bingo.companion matches 1 as @s[team=yellow.bingo] at @s run function koncept.bingo:bingo/tellraw/file_selection/yellow with storage minecraft:bingo.macro

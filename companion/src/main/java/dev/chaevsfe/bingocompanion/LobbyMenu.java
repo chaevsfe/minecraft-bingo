@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.function.Predicate;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
@@ -15,6 +18,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.ItemLike;
 
 final class LobbyMenu extends LockedMenu {
@@ -36,6 +40,8 @@ final class LobbyMenu extends LockedMenu {
     private static final String VOTE_CLOSED = "Voting has closed";
     private static final String START_NOW_LABEL = "Start now (op)";
     private static final String READY_LABEL = "Ready";
+    private static final String PAUSE_LABEL = "Pause";
+    private static final String RESUME_LABEL = "Resume";
     private static final String BACK_LABEL = "Back";
     private static final String BACK_TO_TEAMS = "To the team page";
     private static final String BACK_TO_MODE = "To the mode page";
@@ -55,7 +61,7 @@ final class LobbyMenu extends LockedMenu {
         LOCKED
     }
 
-    private record Vote(boolean mode, String objective, String winObjective, List<String> options, List<String> labels, Predicate<ServerPlayer> gate) {
+    private record Vote(boolean mode, String objective, String winObjective, List<String> options, List<String> labels, String pictures, Predicate<ServerPlayer> gate) {
         ItemLike item(int index) {
             if (mode) {
                 return switch (index) {
@@ -73,9 +79,11 @@ final class LobbyMenu extends LockedMenu {
     }
 
     private static final Vote MODE = new Vote(true, Datapack.VOTE_TYPE, Datapack.VOTE_TYPE_WIN, Datapack.MODES,
-            List.of("Line", "Cross", "Full House"), Datapack::voteMode);
+            List.of("Line", "Cross", "Full House"), "\u0005\u0006\u0007", Datapack::voteMode);
     private static final Vote DIFFICULTY = new Vote(false, Datapack.VOTE_DIFFICULTY, Datapack.VOTE_DIFFICULTY_WIN,
-            Datapack.DIFFICULTIES, List.of("Standard", "Difficult", "Hardcore"), Datapack::voteDifficulty);
+            Datapack.DIFFICULTIES, List.of("Standard", "Difficult", "Hardcore"), "\u0008\u0009\u0010", Datapack::voteDifficulty);
+    private static final FontDescription PICTURE_FONT = new FontDescription.Resource(Identifier.parse("koncept:unicode"));
+    private static final int PICTURE_LINES = 6;
 
     private final Page page;
 
@@ -114,6 +122,8 @@ final class LobbyMenu extends LockedMenu {
         }
         stacks[CLOCK] = clock(server, timer);
         stacks[PLAYERS] = playersItem(server, players);
+        stacks[PLAYERS].set(DataComponents.PROFILE, ResolvableProfile.createResolved(owner.getGameProfile()));
+        stacks[PLAYERS].set(DataComponents.CUSTOM_NAME, Icons.line(stacks[PLAYERS].get(DataComponents.ITEM_NAME).getString(), ChatFormatting.WHITE));
         stacks[READY] = readyItem(server, open, players.size());
         stacks[START_NOW] = startNow(server, players.size());
         stacks[BACK] = back();
@@ -177,10 +187,10 @@ final class LobbyMenu extends LockedMenu {
                 stack = Icons.disabled(label, VOTE_PENDING);
             } else if (phase == Phase.LOCKED) {
                 stack = i == winner
-                        ? Icons.button(vote.item(i), 1, label, true, "Winner", VOTE_CLOSED)
+                        ? Icons.button(vote.item(i), 1, Component.literal(label), picture(vote, i, Icons.line("Winner"), Icons.line(VOTE_CLOSED)), true)
                         : Icons.disabled(label, VOTE_CLOSED);
             } else if (!joined) {
-                stack = Icons.disabled(label, List.of(Icons.line("Votes: " + tally), Icons.line(PICK_TEAM_TO_VOTE)));
+                stack = Icons.disabled(label, picture(vote, i, Icons.line("Votes: " + tally), Icons.line(PICK_TEAM_TO_VOTE)));
             } else {
                 boolean mine = option.equals(own);
                 List<Component> lore = new ArrayList<>();
@@ -188,23 +198,38 @@ final class LobbyMenu extends LockedMenu {
                 if (mine) {
                     lore.add(Icons.line("Your vote", ChatFormatting.GREEN));
                 }
-                stack = Icons.button(vote.item(i), Math.max(1, tally), Component.literal(label), lore, mine);
+                stack = Icons.button(vote.item(i), Math.max(1, tally), Component.literal(label), picture(vote, i, lore.toArray(Component[]::new)), mine);
             }
             stacks[OPTION_SLOTS[i]] = stack;
         }
     }
 
+    private static List<Component> picture(Vote vote, int index, Component... lines) {
+        List<Component> lore = new ArrayList<>(List.of(lines));
+        for (int i = 0; i < PICTURE_LINES; i++) {
+            lore.add(Icons.line(" "));
+        }
+        lore.add(Component.literal(String.valueOf(vote.pictures().charAt(index)))
+                .withStyle(style -> style.withFont(PICTURE_FONT).withItalic(false).withColor(ChatFormatting.WHITE)));
+        return lore;
+    }
+
     private static ItemStack clock(MinecraftServer server, OptionalInt timer) {
         String name;
         int count = 1;
+        boolean paused = Lobby.paused();
+        boolean counting = timer.isPresent() && timer.getAsInt() < Datapack.EARLY_END;
         if (timer.isEmpty()) {
             name = "No countdown";
         } else {
             int seconds = Datapack.secondsLeft(timer.getAsInt());
             count = Math.max(1, Math.min(MAX_COUNT, seconds));
-            name = timer.getAsInt() >= Datapack.EARLY_END ? "Starting..." : "Lobby closes in " + seconds + "s";
+            name = !counting ? "Starting..." : paused ? RESUME_LABEL : PAUSE_LABEL;
         }
         List<Component> lore = new ArrayList<>();
+        if (counting) {
+            lore.add(Icons.line(paused ? "The countdown is paused, click to resume" : "Click to pause the countdown"));
+        }
         lore.add(Icons.line("Players joined: " + Datapack.playerCount(server)));
         if (timer.isEmpty()) {
             lore.add(Icons.line("Game in progress"));
@@ -217,7 +242,7 @@ final class LobbyMenu extends LockedMenu {
         if (starter != null) {
             lore.add(Icons.line("Started by " + starter.getScoreboardName()));
         }
-        return Icons.button(Items.CLOCK, count, Component.literal(name), lore, false);
+        return Icons.button(Items.CLOCK, count, Component.literal(name), lore, paused && counting);
     }
 
     private static ItemStack playersItem(MinecraftServer server, List<ServerPlayer> players) {
@@ -281,6 +306,10 @@ final class LobbyMenu extends LockedMenu {
     @Override
     protected void onButton(int slot, int button) {
         switch (slot) {
+            case CLOCK -> {
+                Lobby.togglePause(owner);
+                draw();
+            }
             case READY -> pressReady();
             case START_NOW -> pressStartNow();
             case BACK -> pressBack();

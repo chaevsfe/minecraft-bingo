@@ -9,13 +9,15 @@ gamerule send_command_feedback false
 # Check game version
 scoreboard objectives add bingo.check_game_version dummy
 
+scoreboard objectives add bingo.companion dummy
+
 execute as @a at @s store result score @s bingo.check_game_version run data get entity @s DataVersion
 
 tellraw @a[scores={bingo.check_game_version=..5022}] ["",{"text":"Error","color":"red",hover_event:{action:'show_text',value:"You need to upgrade to the appropriate version of the game or download the appropriate version of the data pack."}},{"text":". The Bingo data pack is designed for Minecraft version 26.3","color":"red",hover_event:{action:'show_text',value:"You need to upgrade to the appropriate version of the game or download the appropriate version of the data pack.","color":"red"}}]
 
 tellraw @a[scores={bingo.check_game_version=5024..}] ["",{"text":"Error","color":"red",hover_event:{action:'show_text',value:"You need to upgrade to the appropriate version of the game or download the appropriate version of the Data Package."}},{"text":". The Bingo data pack is designed for Minecraft version 26.3","color":"red",hover_event:{action:'show_text',value:"You need to upgrade to the appropriate version of the game or download the appropriate version of the data pack.","color":"red"}}]
 
-tellraw @a[scores={bingo.check_game_version=5023}] {"text":"Bingo v26.3 [26.3] data pack activated","color":"#8CF657",hover_event:{action:'show_text',value:"This message is displayed when updating data pack."}}
+execute unless score mod bingo.companion matches 1 run tellraw @a[scores={bingo.check_game_version=5023}] {"text":"Bingo v26.3 [26.3] data pack activated","color":"#8CF657",hover_event:{action:'show_text',value:"This message is displayed when updating data pack."}}
 
 scoreboard objectives remove bingo.check_game_version
 
