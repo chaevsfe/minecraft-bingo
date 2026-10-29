@@ -8,6 +8,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -49,7 +51,6 @@ final class BingoCommands {
     private static LiteralArgumentBuilder<CommandSourceStack> transfer(String name, String key) {
         return Commands.literal(name)
                 .requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
-                .executes(c -> Transfer.send(c.getSource(), key, null))
                 .then(Commands.argument("players", StringArgumentType.greedyString())
                         .suggests(BingoCommands::suggestPlayers)
                         .executes(c -> Transfer.send(c.getSource(), key, StringArgumentType.getString(c, "players"))));
@@ -69,14 +70,20 @@ final class BingoCommands {
                 cut = i + 1;
             }
         }
-        StringReader reader = new StringReader(builder.getInput());
-        reader.setCursor(builder.getStart() + cut);
-        EntitySelectorParser parser = new EntitySelectorParser(reader, true);
-        try {
-            parser.parse();
-        } catch (CommandSyntaxException ignored) {
+        String tail = remaining.substring(cut);
+        if (tail.startsWith("@") && tail.contains("[")) {
+            StringReader reader = new StringReader(builder.getInput());
+            reader.setCursor(builder.getStart() + cut);
+            EntitySelectorParser parser = new EntitySelectorParser(reader, true);
+            try {
+                parser.parse();
+            } catch (CommandSyntaxException ignored) {
+            }
+            return parser.fillSuggestions(builder.createOffset(builder.getStart() + cut), b -> SharedSuggestionProvider.suggest(List.of(), b));
         }
-        return parser.fillSuggestions(builder.createOffset(builder.getStart() + cut), b -> SharedSuggestionProvider.suggest(context.getSource().getOnlinePlayerNames(), b));
+        List<String> options = new ArrayList<>(Transfer.SELECTORS);
+        options.addAll(context.getSource().getOnlinePlayerNames());
+        return SharedSuggestionProvider.suggest(options, builder.createOffset(builder.getStart() + cut));
     }
 
     private static int fail(CommandSourceStack source, String message) {

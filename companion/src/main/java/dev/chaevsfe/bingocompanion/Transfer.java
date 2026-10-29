@@ -22,7 +22,9 @@ final class Transfer {
     static final int DEFAULT_PORT = 25565;
     private static final String TIMEOUT = "wake_timeout";
     static final int DEFAULT_TIMEOUT = 180;
+    static final List<String> SELECTORS = List.of("@a", "@s");
     private static final DynamicCommandExceptionType NO_SUCH_PLAYER = new DynamicCommandExceptionType(name -> Component.literal("No player named " + name + " is online"));
+    private static final DynamicCommandExceptionType SELECTOR_NOT_ALLOWED = new DynamicCommandExceptionType(token -> Component.literal("Use @a, @s or player names, not " + token));
 
     private Transfer() {
     }
@@ -38,9 +40,9 @@ final class Transfer {
             source.sendFailure(Component.literal(e.getMessage()));
             return 0;
         }
-        Set<UUID> players = selection == null ? null : select(source, selection);
-        if (players == null ? source.getServer().getPlayerList().getPlayers().isEmpty() : players.isEmpty()) {
-            source.sendFailure(Component.literal(players == null ? "No players online" : "No players matched"));
+        Set<UUID> players = select(source, selection);
+        if (players.isEmpty()) {
+            source.sendFailure(Component.literal("No players matched"));
             return 0;
         }
         String label = key.equals(BINGO) ? "the Bingo server" : "the main server";
@@ -54,6 +56,9 @@ final class Transfer {
     private static Set<UUID> select(CommandSourceStack source, String text) throws CommandSyntaxException {
         Set<UUID> out = new LinkedHashSet<>();
         for (String token : tokens(text)) {
+            if (token.startsWith("@") && SELECTORS.stream().noneMatch(allowed -> token.equals(allowed) || token.startsWith(allowed + "["))) {
+                throw SELECTOR_NOT_ALLOWED.create(token);
+            }
             StringReader reader = new StringReader(token);
             EntitySelector selector = new EntitySelectorParser(reader, true).parse();
             if (reader.canRead()) {

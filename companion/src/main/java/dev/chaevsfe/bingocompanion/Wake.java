@@ -127,10 +127,7 @@ final class Wake implements Runnable {
                         return;
                     }
                     nextProbe = System.nanoTime() + PROBE_INTERVAL_NANOS;
-                    if (!waking) {
-                        waking = true;
-                        server.execute(this::announce);
-                    }
+                    waking = true;
                 }
                 if (elapsedSeconds() >= timeoutSeconds) {
                     server.execute(this::timeout);
@@ -153,15 +150,11 @@ final class Wake implements Runnable {
         return Character.toUpperCase(label.charAt(0)) + label.substring(1);
     }
 
-    private void announce() {
-        source.sendSuccess(() -> Component.literal("Waking " + label), true);
-    }
-
     private void transfer() {
         ACTIVE.compareAndSet(this, null);
         List<ServerPlayer> players = players();
         if (players.isEmpty()) {
-            fail(selection == null ? "No players online" : "None of those players are online");
+            fail("None of those players are online");
             return;
         }
         source.sendSuccess(() -> Component.literal("Sending " + players.size() + " player(s) to " + target.host() + ":" + target.port()), true);
@@ -189,12 +182,8 @@ final class Wake implements Runnable {
     }
 
     private List<ServerPlayer> players() {
-        List<ServerPlayer> online = server.getPlayerList().getPlayers();
-        if (selection == null) {
-            return List.copyOf(online);
-        }
         List<ServerPlayer> out = new ArrayList<>();
-        for (ServerPlayer player : online) {
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             if (selection.contains(player.getUUID())) {
                 out.add(player);
             }
