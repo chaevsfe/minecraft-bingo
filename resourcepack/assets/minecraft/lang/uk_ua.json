@@ -49,7 +49,7 @@
   "bingo.settings.vote": "Голосування за режим і складність.",
   "bingo.settings.before_game": "Перед початком гри рекомендується налаштувати параметри командою '%s'.",
   "bingo.settings.before_game_hint": "(Налаштування розташування списку предметів та інших параметрів для комфортної гри.)",
-  "bingo.settings.command": "/trigger .bingo.settings",
+  "bingo.settings.command": "/bingo settings",
   "bingo.settings.timer.notifications_1": "Щоб переміщати список предметів по екрану, використовуйте команду '%s'.",
   "bingo.settings.timer.notifications_2": "Щоб змінити масштаб списку предметів, використовуйте команду '%s'.",
   "bingo.settings.timer.notifications_3": "Щоб дізнатися назву предмета в списку, використовуйте команду '%s'.",

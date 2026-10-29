@@ -49,7 +49,7 @@
   "bingo.settings.vote": "Abstimmung über Modus und Schwierigkeitsgrad.",
   "bingo.settings.before_game": "Vor Spielbeginn empfehlen wir, die Einstellungen mit dem Befehl '%s' zu konfigurieren.",
   "bingo.settings.before_game_hint": "(Positionierung der Liste und weitere Einstellungen für ein angenehmes Spielerlebnis.)",
-  "bingo.settings.command": "/trigger .bingo.settings",
+  "bingo.settings.command": "/bingo settings",
   "bingo.settings.timer.notifications_1": "Um die Gegenstandsliste auf dem Bildschirm zu verschieben, verwenden Sie den Befehl '%s'.",
   "bingo.settings.timer.notifications_2": "Um die Größe der Gegenstandsliste zu ändern, verwenden Sie den Befehl '%s'.",
   "bingo.settings.timer.notifications_3": "Um den Namen eines Gegenstands in der Liste zu erfahren, verwenden Sie den Befehl '%s'.",

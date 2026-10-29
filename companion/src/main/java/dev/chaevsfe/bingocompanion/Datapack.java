@@ -23,10 +23,16 @@ import net.minecraft.world.scores.Scoreboard;
 final class Datapack {
     static final String START = ".bingo.start";
     static final String RULES = ".bingo.rules";
-    static final String LEAVE_ASK = ".bingo.leave.game";
+    static final String CHAT_SETTINGS = ".bingo.settings";
     static final String LEAVE_YES = "bingo.leave.game.yes";
     static final String TEAM_JOIN = "bingo.team.join.";
     static final String VOTE = "bingo.vote.";
+    static final String TP_YES = "bingo.tp_yes";
+    static final String TP_NO = "bingo.tp_no";
+    static final String ADVANCEMENTS_ON = "bingo.dynamic.advancement.enabled";
+    static final String ADVANCEMENTS_OFF = "bingo.dynamic.advancement.disabled";
+    static final String LOCATOR_ON = "bingo.dynamic.locator.bar.enabled";
+    static final String LOCATOR_OFF = "bingo.dynamic.locator.bar.disabled";
     static final String VERTICAL_RESET = "bingo.items_top";
     static final String UP_10 = "bingo.items_bottom_1";
     static final String UP_1 = "bingo.items_bottom_2";
@@ -58,6 +64,9 @@ final class Datapack {
     static final String VOTE_DIFFICULTY = "bingo.vote.difficulty";
     static final String VOTE_TYPE_WIN = "bingo.vote.type.win";
     static final String VOTE_DIFFICULTY_WIN = "bingo.vote.difficulty.win";
+    static final String TP_TYPE = "bingo.type.tp";
+    static final String ADVANCEMENT_SCORE = "bingo.dynamic.advancement";
+    static final String LOCATOR_SCORE = "bingo.dynamic.locator.bar";
     static final int LOBBY_END = 910;
     static final int VOTE_LOCK = 900;
     static final int EARLY_END = 899;
@@ -74,10 +83,11 @@ final class Datapack {
     static final ScoreHolder GAME_HOLDER = ScoreHolder.forNameOnly("game");
     static final ScoreHolder TIMER_HOLDER = ScoreHolder.forNameOnly("timer");
     static final ScoreHolder COUNT_HOLDER = ScoreHolder.forNameOnly("count");
+    static final ScoreHolder TP_HOLDER = ScoreHolder.forNameOnly("tp");
 
     private static final String LAUNCH = "bingo.start.launch.receipt";
     private static final String LOBBY = "bingo.start.enable.trigger";
-    private static final List<String> SETUP = List.of("bingo.dynamic.advancement", "bingo.dynamic.locator.bar");
+    private static final List<String> SETUP = List.of(ADVANCEMENT_SCORE, LOCATOR_SCORE);
     private static final String TAG_PLAYER = "bingo.game.player";
     private static final String TAG_DEALT = "bingo.actionbar.start";
     private static final String TEAM_SUFFIX = ".bingo";
@@ -125,6 +135,10 @@ final class Datapack {
         return startScore(server, LAUNCH) == 1;
     }
 
+    static boolean gameRunning(ServerPlayer player) {
+        return running(server(player));
+    }
+
     static boolean lobbyOpen(MinecraftServer server) {
         return startScore(server, LOBBY) >= 1;
     }
@@ -149,6 +163,10 @@ final class Datapack {
     }
 
     static ServerPlayer settingUp(MinecraftServer server) {
+        ServerPlayer wizard = StartMenu.wizardOwner(server);
+        if (wizard != null) {
+            return wizard;
+        }
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             for (String name : SETUP) {
                 if (score(server, player, name).orElse(-1) == 0) {
@@ -165,7 +183,33 @@ final class Datapack {
 
     static boolean canStart(ServerPlayer player) {
         MinecraftServer server = server(player);
-        return running(server) || settingUp(server) == null;
+        return !running(server) && settingUp(server) == null;
+    }
+
+    static boolean canStartAs(ServerPlayer player) {
+        MinecraftServer server = server(player);
+        if (running(server)) {
+            return false;
+        }
+        ServerPlayer setter = settingUp(server);
+        return setter == null || setter == player;
+    }
+
+    private static boolean isWizard(ServerPlayer player) {
+        MinecraftServer server = server(player);
+        return !running(server) && StartMenu.wizardOwner(server) == player;
+    }
+
+    static boolean wizardTp(ServerPlayer player) {
+        return isWizard(player) && score(server(player), TP_HOLDER, TP_TYPE).orElse(-1) == 0;
+    }
+
+    static boolean wizardAdvancement(ServerPlayer player) {
+        return isWizard(player) && score(player, ADVANCEMENT_SCORE).orElse(-1) == 0;
+    }
+
+    static boolean wizardLocator(ServerPlayer player) {
+        return isWizard(player) && score(player, LOCATOR_SCORE).orElse(-1) == 0;
     }
 
     static boolean always(ServerPlayer player) {
@@ -180,12 +224,12 @@ final class Datapack {
         return inGame(player) && player.entityTags().contains(TAG_DEALT);
     }
 
-    static boolean canLeaveAsk(ServerPlayer player) {
-        return inGame(player) && objective(server(player), LEAVE_ASK) != null;
-    }
-
     static boolean canLeave(ServerPlayer player) {
         return inGame(player) && objective(server(player), LEAVE_YES) != null;
+    }
+
+    static boolean chatSettings(ServerPlayer player) {
+        return canLeave(player) && objective(server(player), CHAT_SETTINGS) != null;
     }
 
     static boolean lobby(MinecraftServer server) {
@@ -194,10 +238,6 @@ final class Datapack {
 
     static boolean lobby(ServerPlayer player) {
         return lobby(server(player));
-    }
-
-    static boolean canJoin(ServerPlayer player) {
-        return lobby(player) && !isGamePlayer(player);
     }
 
     static boolean canChooseTeam(ServerPlayer player) {
@@ -335,6 +375,7 @@ final class Datapack {
         }
         server.getFunctions().execute(function.get(), server.createCommandSourceStack().withSuppressedOutput());
         clearSetup(server);
+        StartMenu.clear(server);
         return true;
     }
 

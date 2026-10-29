@@ -49,7 +49,7 @@
   "bingo.settings.vote": "Vote pour le mode et la difficulté.",
   "bingo.settings.before_game": "Avant de commencer, nous recommandons de configurer les paramètres avec « %s ».",
   "bingo.settings.before_game_hint": "(Positionner la liste d’objets et ajuster d’autres options pour un confort de jeu.)",
-  "bingo.settings.command": "/trigger .bingo.settings",
+  "bingo.settings.command": "/bingo settings",
   "bingo.settings.timer.notifications_1": "Pour déplacer la liste des objets à l'écran, utilisez la commande '%s'.",
   "bingo.settings.timer.notifications_2": "Pour modifier l'échelle de la liste des objets, utilisez la commande '%s'.",
   "bingo.settings.timer.notifications_3": "Pour connaître le nom d'un objet dans la liste, utilisez la commande '%s'.",

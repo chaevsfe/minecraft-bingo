@@ -6,13 +6,10 @@ execute store result storage bingo.macro number_id_player int 1 run scoreboard p
 
 data modify storage minecraft:bingo.macro top_or_bottom set value top
 execute unless score @s bingo.vertical = @s bingo.vertical run scoreboard players set @s bingo.vertical 0
-execute unless score @s bingo.icon.size matches 8..32 run scoreboard players set @s bingo.icon.size 16
-execute if score @s bingo.icon.size matches 8 if score @s bingo.vertical matches 3.. run scoreboard players set @s bingo.vertical 2
-execute if score @s bingo.icon.size matches 10 if score @s bingo.vertical matches 5.. run scoreboard players set @s bingo.vertical 4
+execute unless score @s bingo.icon.size matches 12 unless score @s bingo.icon.size matches 16 unless score @s bingo.icon.size matches 20 unless score @s bingo.icon.size matches 24 run scoreboard players set @s bingo.icon.size 16
 execute if score @s bingo.icon.size matches 12 if score @s bingo.vertical matches 7.. run scoreboard players set @s bingo.vertical 6
-execute if score @s bingo.icon.size matches 14 if score @s bingo.vertical matches 9.. run scoreboard players set @s bingo.vertical 8
 execute if score @s bingo.vertical matches 11.. run scoreboard players set @s bingo.vertical 10
-execute if score @s bingo.vertical matches ..-61 run scoreboard players set @s bingo.vertical -60
+execute if score @s bingo.vertical matches ..-31 run scoreboard players set @s bingo.vertical -30
 execute store result storage minecraft:bingo.macro v int 1 run scoreboard players get @s bingo.vertical
 function koncept.bingo:bingo/bossbar/height with storage minecraft:bingo.macro
 

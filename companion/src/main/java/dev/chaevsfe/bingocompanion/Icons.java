@@ -1,7 +1,6 @@
 package dev.chaevsfe.bingocompanion;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -12,10 +11,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
-import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.ItemLike;
 
 final class Icons {
+    static final int TEXT_COLOR = 0xffcc64;
+    static final int BUTTON_COLOR = 0x8CF657;
     private static final String MARKER = "bingo_companion";
 
     private Icons() {
@@ -51,6 +51,10 @@ final class Icons {
 
     static ItemStack button(ItemLike item, String name, String... lore) {
         return button(item, 1, name, false, lore);
+    }
+
+    static ItemStack toggle(ItemLike item, String name, boolean on, String... lore) {
+        return button(item, 1, name, on, lore);
     }
 
     static ItemStack disabled(String label, String reason) {
@@ -98,12 +102,6 @@ final class Icons {
             name.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
         }
         return name.toString();
-    }
-
-    static ItemStack filler() {
-        ItemStack stack = new ItemStack(Items.STAINED_GLASS_PANE.black());
-        stack.set(DataComponents.TOOLTIP_DISPLAY, new TooltipDisplay(true, new LinkedHashSet<>()));
-        return mark(stack);
     }
 
     static ItemStack mark(ItemStack stack) {

@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.scores.Objective;
@@ -23,9 +21,10 @@ import net.minecraft.world.scores.Scoreboard;
 final class TriggerQueue {
     enum Nav {
         CLOSE,
-        SETTINGS,
         CARD,
-        LOBBY
+        LOBBY_TEAMS,
+        LOBBY_MODE,
+        LOBBY_DIFFICULTY
     }
 
     private record Action(String objective, Predicate<ServerPlayer> gate) {
@@ -40,6 +39,7 @@ final class TriggerQueue {
     private static final Map<UUID, ArrayDeque<Action>> QUEUES = new LinkedHashMap<>();
     private static final Set<UUID> DIRTY = new HashSet<>();
     private static final Map<UUID, Nav> NAVIGATION = new HashMap<>();
+    private static final Map<UUID, Nav> AFTER_FLUSH = new HashMap<>();
     private static final List<Write> WRITES = new ArrayList<>();
 
     private TriggerQueue() {
@@ -56,6 +56,14 @@ final class TriggerQueue {
         NAVIGATION.put(player.getUUID(), nav);
     }
 
+    static void navigateAfterFlush(ServerPlayer player, Nav nav) {
+        if (QUEUES.containsKey(player.getUUID())) {
+            AFTER_FLUSH.put(player.getUUID(), nav);
+        } else {
+            navigate(player, nav);
+        }
+    }
+
     static void markDirty(ServerPlayer player) {
         DIRTY.add(player.getUUID());
     }
@@ -68,26 +76,31 @@ final class TriggerQueue {
         Iterator<Map.Entry<UUID, ArrayDeque<Action>>> entries = QUEUES.entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry<UUID, ArrayDeque<Action>> entry = entries.next();
-            ServerPlayer player = server.getPlayerList().getPlayer(entry.getKey());
-            if (player == null) {
-                entries.remove();
-                continue;
-            }
-            Action action = entry.getValue().pollFirst();
-            if (entry.getValue().isEmpty()) {
-                entries.remove();
-            }
+            UUID id = entry.getKey();
+            ServerPlayer player = server.getPlayerList().getPlayer(id);
+            Action action = player == null ? null : entry.getValue().pollFirst();
             if (action == null) {
+                entries.remove();
+                AFTER_FLUSH.remove(id);
                 continue;
             }
-            DIRTY.add(entry.getKey());
+            DIRTY.add(id);
+            boolean done = entry.getValue().isEmpty();
             Objective objective = scoreboard.getObjective(action.objective());
             if (objective == null || !action.gate().test(player)) {
                 Datapack.tell(player, UNAVAILABLE);
-                continue;
+                done = true;
+            } else {
+                scoreboard.getOrCreatePlayerScore(player, objective).set(1);
+                WRITES.add(new Write(player, action.objective()));
             }
-            scoreboard.getOrCreatePlayerScore(player, objective).set(1);
-            WRITES.add(new Write(player, action.objective()));
+            if (done) {
+                entries.remove();
+                Nav nav = AFTER_FLUSH.remove(id);
+                if (nav != null) {
+                    NAVIGATION.put(id, nav);
+                }
+            }
         }
     }
 
@@ -127,18 +140,21 @@ final class TriggerQueue {
             }
             switch (entry.getValue()) {
                 case CLOSE -> player.closeContainer();
-                case SETTINGS -> SettingsMenu.open(player);
                 case CARD -> {
                     if (!CardMenu.open(player)) {
-                        player.sendOverlayMessage(Component.literal(SettingsMenu.GAME_ONLY).withStyle(ChatFormatting.RED));
+                        Datapack.tell(player, SettingsMenu.GAME_ONLY);
                     }
                 }
-                case LOBBY -> {
-                    if (!LobbyMenu.open(player)) {
-                        Datapack.tell(player, Lobby.closedReason(player));
-                    }
-                }
+                case LOBBY_TEAMS -> openLobby(player, LobbyMenu.Page.TEAMS);
+                case LOBBY_MODE -> openLobby(player, LobbyMenu.Page.MODE);
+                case LOBBY_DIFFICULTY -> openLobby(player, LobbyMenu.Page.DIFFICULTY);
             }
+        }
+    }
+
+    private static void openLobby(ServerPlayer player, LobbyMenu.Page page) {
+        if (!LobbyMenu.open(player, page)) {
+            Datapack.tell(player, Lobby.closedReason(player));
         }
     }
 }

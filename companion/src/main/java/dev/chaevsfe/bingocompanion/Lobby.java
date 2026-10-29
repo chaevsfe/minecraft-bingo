@@ -23,15 +23,13 @@ final class Lobby {
     static final String NO_COUNTDOWN = "No countdown in this lobby";
     static final String STARTING = "The game is starting";
     static final String NOBODY_JOINED = "Nobody has joined yet";
-    static final int TEXT_COLOR = 0xffcc64;
     private static final String ALL_READY = "Everyone is ready, the game starts now.";
     private static final String OP_START = " started the game now.";
     private static final String ANNOUNCE = " started a Bingo game. ";
     private static final String OPEN_LOBBY = "[Open lobby]";
     private static final String OPEN_LOBBY_HINT = "Click to open the Bingo lobby";
-    private static final String OPEN_LOBBY_COMMAND = "/bingo lobby";
+    private static final String OPEN_LOBBY_COMMAND = "/bingo join";
     private static final String UNKNOWN_STARTER = "Someone";
-    private static final int BUTTON_COLOR = 0x8CF657;
     private static final int ANNOUNCE_UNTIL = 2;
 
     private static final Set<UUID> READY = new HashSet<>();
@@ -171,7 +169,7 @@ final class Lobby {
         }
         scoreboard.getOrCreatePlayerScore(Datapack.TIMER_HOLDER, scoreboard.getObjective(Datapack.TIMER)).set(Datapack.EARLY_END);
         String text = op != null ? op.getScoreboardName() + OP_START : ALL_READY;
-        server.getPlayerList().broadcastSystemMessage(Component.literal(text).withColor(TEXT_COLOR), false);
+        server.getPlayerList().broadcastSystemMessage(Component.literal(text).withColor(Icons.TEXT_COLOR), false);
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             if (player.containerMenu instanceof LobbyMenu) {
                 TriggerQueue.markDirty(player);
@@ -210,7 +208,7 @@ final class Lobby {
         ServerPlayer starter = Datapack.starter(server);
         String name = starter == null ? UNKNOWN_STARTER : starter.getScoreboardName();
         server.getPlayerList().broadcastSystemMessage(announcement(name), false);
-        if (starter != null && LobbyMenu.open(starter)) {
+        if (starter != null && LobbyMenu.open(starter, LobbyMenu.Page.TEAMS)) {
             TriggerQueue.markDirty(starter);
         }
     }
@@ -222,8 +220,8 @@ final class Lobby {
     }
 
     static Component announcement(String starter) {
-        return Component.literal(starter + ANNOUNCE).withColor(TEXT_COLOR)
-                .append(Component.literal(OPEN_LOBBY).withStyle(style -> style.withColor(BUTTON_COLOR)
+        return Component.literal(starter + ANNOUNCE).withColor(Icons.TEXT_COLOR)
+                .append(Component.literal(OPEN_LOBBY).withStyle(style -> style.withColor(Icons.BUTTON_COLOR)
                         .withClickEvent(new ClickEvent.RunCommand(OPEN_LOBBY_COMMAND))
                         .withHoverEvent(new HoverEvent.ShowText(Component.literal(OPEN_LOBBY_HINT)))));
     }

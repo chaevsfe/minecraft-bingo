@@ -49,7 +49,7 @@
   "bingo.settings.vote": "Mod ve zorluk oylaması.",
   "bingo.settings.before_game": "Oyuna başlamadan önce '%s' komutuyla ayarları yapmanızı öneririz.",
   "bingo.settings.before_game_hint": "(Öğe listesi konumu ve diğer ayarların rahat oyun için yapılandırılması.)",
-  "bingo.settings.command": "/trigger .bingo.settings",
+  "bingo.settings.command": "/bingo settings",
   "bingo.settings.timer.notifications_1": "Eşya listesini ekranda taşımak için '%s' komutunu kullanın.",
   "bingo.settings.timer.notifications_2": "Eşya listesinin ölçeğini değiştirmek için '%s' komutunu kullanın.",
   "bingo.settings.timer.notifications_3": "Listedeki bir eşyanın adını öğrenmek için '%s' komutunu kullanın.",

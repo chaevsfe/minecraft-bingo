@@ -1,0 +1,51 @@
+package dev.chaevsfe.bingocompanion;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+
+final class Hint {
+    private static final String USE = "Use ";
+    private static final String OR = " or ";
+    private static final String SETTINGS_COMMAND = "/bingo settings";
+    private static final String CARD_COMMAND = "/bingo card";
+    private static final String SETTINGS_HOVER = "Open the Bingo settings";
+    private static final String CARD_HOVER = "Show your Bingo card";
+    private static final Set<UUID> HINTED = new HashSet<>();
+
+    private Hint() {
+    }
+
+    static void startTick(MinecraftServer server) {
+        if (!Datapack.packLoaded(server)) {
+            return;
+        }
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            if (HINTED.add(player.getUUID())) {
+                player.sendSystemMessage(hint());
+            }
+        }
+    }
+
+    static void clear(MinecraftServer server) {
+        HINTED.clear();
+    }
+
+    static Component hint() {
+        return Component.literal(USE).withColor(Icons.TEXT_COLOR)
+                .append(command(SETTINGS_COMMAND, SETTINGS_HOVER))
+                .append(Component.literal(OR).withColor(Icons.TEXT_COLOR))
+                .append(command(CARD_COMMAND, CARD_HOVER));
+    }
+
+    private static Component command(String command, String hover) {
+        return Component.literal(command).withStyle(style -> style.withColor(Icons.BUTTON_COLOR)
+                .withClickEvent(new ClickEvent.RunCommand(command))
+                .withHoverEvent(new HoverEvent.ShowText(Component.literal(hover))));
+    }
+}

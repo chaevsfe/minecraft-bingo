@@ -49,7 +49,7 @@
   "bingo.settings.vote": "投票选择模式和难度。",
   "bingo.settings.before_game": "建议在开始游戏前使用命令“%s”进行设置。",
   "bingo.settings.before_game_hint": "（调整物品清单位置及其他参数以便更好游戏体验。）",
-  "bingo.settings.command": "/trigger .bingo.settings",
+  "bingo.settings.command": "/bingo settings",
   "bingo.settings.timer.notifications_1": "要在屏幕上移动物品列表，请使用命令“%s”。",
   "bingo.settings.timer.notifications_2": "要更改物品列表的缩放，请使用命令“%s”。",
   "bingo.settings.timer.notifications_3": "要查看列表中物品的名称，请使用命令“%s”。",

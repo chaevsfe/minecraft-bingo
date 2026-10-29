@@ -1,6 +1,7 @@
 package dev.chaevsfe.bingocompanion;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.function.Predicate;
@@ -17,21 +18,35 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 
 final class LobbyMenu extends LockedMenu {
+    enum Page {
+        TEAMS("Bingo Lobby: Teams"),
+        MODE("Bingo Lobby: Mode"),
+        DIFFICULTY("Bingo Lobby: Difficulty");
+
+        private final String title;
+
+        Page(String title) {
+            this.title = title;
+        }
+    }
+
     static final String TEAMS_CLOSED = "Teams are only chosen before the game starts";
-    private static final String TITLE = "Bingo Lobby";
     private static final String PICK_TEAM_TO_VOTE = "Pick a team to vote";
     private static final String VOTE_PENDING = "Voting is not open yet";
     private static final String VOTE_CLOSED = "Voting has closed";
     private static final String START_NOW_LABEL = "Start now (op)";
     private static final String READY_LABEL = "Ready";
-    private static final int TEAM_SLOTS = 9;
-    private static final int CLOCK = 15;
-    private static final int PLAYERS = 16;
-    private static final int START_NOW = 23;
-    private static final int READY = 24;
-    private static final int SETTINGS = 25;
-    private static final int CLOSE = 26;
-    private static final int[] FILLERS = {10, 14, 17, 19};
+    private static final String BACK_LABEL = "Back";
+    private static final String BACK_TO_TEAMS = "To the team page";
+    private static final String BACK_TO_MODE = "To the mode page";
+    private static final int SLOTS = 27;
+    private static final int CLOCK = 7;
+    private static final int PLAYERS = 8;
+    private static final int READY = 16;
+    private static final int START_NOW = 17;
+    private static final int BACK = 26;
+    private static final int[] TEAM_SLOTS = {2, 3, 4, 11, 12, 13, 20, 21, 22};
+    private static final int[] OPTION_SLOTS = {10, 12, 14};
     private static final int MAX_COUNT = 64;
 
     private enum Phase {
@@ -40,12 +55,7 @@ final class LobbyMenu extends LockedMenu {
         LOCKED
     }
 
-    private record Vote(boolean mode, String title, String objective, String winObjective, List<String> options, List<String> labels,
-            Predicate<ServerPlayer> gate, int info, int first) {
-        ItemLike icon() {
-            return mode ? Items.MAP : Items.COMPASS;
-        }
-
+    private record Vote(boolean mode, String objective, String winObjective, List<String> options, List<String> labels, Predicate<ServerPlayer> gate) {
         ItemLike item(int index) {
             if (mode) {
                 return switch (index) {
@@ -60,27 +70,26 @@ final class LobbyMenu extends LockedMenu {
                 default -> Items.NETHERITE_INGOT;
             };
         }
-
-        boolean owns(int slot) {
-            return slot >= first && slot < first + options.size();
-        }
     }
 
-    private static final Vote MODE = new Vote(true, "Mode vote", Datapack.VOTE_TYPE, Datapack.VOTE_TYPE_WIN, Datapack.MODES,
-            List.of("Line", "Cross", "Full House"), Datapack::voteMode, 9, 11);
-    private static final Vote DIFFICULTY = new Vote(false, "Difficulty vote", Datapack.VOTE_DIFFICULTY, Datapack.VOTE_DIFFICULTY_WIN,
-            Datapack.DIFFICULTIES, List.of("Standard", "Difficult", "Hardcore"), Datapack::voteDifficulty, 18, 20);
+    private static final Vote MODE = new Vote(true, Datapack.VOTE_TYPE, Datapack.VOTE_TYPE_WIN, Datapack.MODES,
+            List.of("Line", "Cross", "Full House"), Datapack::voteMode);
+    private static final Vote DIFFICULTY = new Vote(false, Datapack.VOTE_DIFFICULTY, Datapack.VOTE_DIFFICULTY_WIN,
+            Datapack.DIFFICULTIES, List.of("Standard", "Difficult", "Hardcore"), Datapack::voteDifficulty);
 
-    private LobbyMenu(int id, Inventory inventory, ServerPlayer owner) {
+    private final Page page;
+
+    private LobbyMenu(int id, Inventory inventory, ServerPlayer owner, Page page) {
         super(MenuType.GENERIC_9x3, id, inventory, owner, 3);
+        this.page = page;
         draw();
     }
 
-    static boolean open(ServerPlayer player) {
+    static boolean open(ServerPlayer player, Page page) {
         if (!Datapack.lobby(player)) {
             return false;
         }
-        player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new LobbyMenu(id, inventory, (ServerPlayer) p), Component.literal(TITLE)));
+        player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new LobbyMenu(id, inventory, (ServerPlayer) p, page), Component.literal(page.title)));
         return true;
     }
 
@@ -91,21 +100,26 @@ final class LobbyMenu extends LockedMenu {
         boolean joined = Datapack.isGamePlayer(owner);
         OptionalInt timer = Datapack.lobbyTimer(server);
         List<ServerPlayer> players = Datapack.gamePlayers(server);
-        String ownTeam = Datapack.team(owner);
-        for (int slot = 0; slot < TEAM_SLOTS; slot++) {
-            put(slot, teamCell(server, Datapack.TEAMS.get(slot), open, joined, ownTeam));
+        ItemStack[] stacks = new ItemStack[SLOTS];
+        Arrays.fill(stacks, ItemStack.EMPTY);
+        switch (page) {
+            case TEAMS -> {
+                String ownTeam = Datapack.team(owner);
+                for (int i = 0; i < TEAM_SLOTS.length; i++) {
+                    stacks[TEAM_SLOTS[i]] = teamCell(server, Datapack.TEAMS.get(i), open, joined, ownTeam);
+                }
+            }
+            case MODE -> drawVote(stacks, MODE, server, open, joined, timer);
+            case DIFFICULTY -> drawVote(stacks, DIFFICULTY, server, open, joined, timer);
         }
-        drawVote(MODE, server, open, joined, timer);
-        drawVote(DIFFICULTY, server, open, joined, timer);
-        for (int slot : FILLERS) {
-            put(slot, Icons.filler());
+        stacks[CLOCK] = clock(server, timer);
+        stacks[PLAYERS] = playersItem(server, players);
+        stacks[READY] = readyItem(server, open, players.size());
+        stacks[START_NOW] = startNow(server, players.size());
+        stacks[BACK] = back();
+        for (int slot = 0; slot < SLOTS; slot++) {
+            put(slot, stacks[slot]);
         }
-        put(CLOCK, clock(server, timer));
-        put(PLAYERS, playersItem(server, players));
-        put(START_NOW, startNow(server, players.size()));
-        put(READY, readyItem(server, open, players.size()));
-        put(SETTINGS, Icons.button(Items.ARROW, "Settings", "Back to the settings page"));
-        put(CLOSE, Icons.button(Items.BARRIER, "Close"));
     }
 
     private ItemStack teamCell(MinecraftServer server, String color, boolean open, boolean joined, String ownTeam) {
@@ -148,20 +162,10 @@ final class LobbyMenu extends LockedMenu {
         return Math.max(1, Math.min(vote.options().size(), winner)) - 1;
     }
 
-    private void drawVote(Vote vote, MinecraftServer server, boolean open, boolean joined, OptionalInt timer) {
+    private void drawVote(ItemStack[] stacks, Vote vote, MinecraftServer server, boolean open, boolean joined, OptionalInt timer) {
         Phase phase = phase(server, vote, timer);
         int winner = winnerIndex(server, vote);
         String own = Datapack.ownVote(owner, vote.options());
-        List<Component> info = new ArrayList<>();
-        for (int i = 0; i < vote.options().size(); i++) {
-            info.add(Icons.line(vote.labels().get(i) + ": " + Datapack.voteTally(server, vote.objective(), vote.options().get(i))));
-        }
-        info.add(Icons.line(switch (phase) {
-            case PENDING -> "Opens in a moment";
-            case OPEN -> "Open until the lobby closes";
-            case LOCKED -> "Closed, result: " + vote.labels().get(winner);
-        }));
-        put(vote.info(), Icons.button(vote.icon(), 1, Component.literal(vote.title()), info, false));
         for (int i = 0; i < vote.options().size(); i++) {
             String option = vote.options().get(i);
             String label = vote.labels().get(i);
@@ -186,7 +190,7 @@ final class LobbyMenu extends LockedMenu {
                 }
                 stack = Icons.button(vote.item(i), Math.max(1, tally), Component.literal(label), lore, mine);
             }
-            put(vote.first() + i, stack);
+            stacks[OPTION_SLOTS[i]] = stack;
         }
     }
 
@@ -236,7 +240,7 @@ final class LobbyMenu extends LockedMenu {
 
     private ItemStack startNow(MinecraftServer server, int players) {
         if (!Datapack.isOp(owner)) {
-            return Icons.filler();
+            return ItemStack.EMPTY;
         }
         String blocker = Lobby.startBlocker(server);
         if (blocker != null) {
@@ -257,22 +261,61 @@ final class LobbyMenu extends LockedMenu {
         return Icons.button(Items.DYE.gray(), 1, READY_LABEL, false, "Click when you are ready", tally, "The game starts when everyone is ready");
     }
 
+    private ItemStack back() {
+        return switch (page) {
+            case TEAMS -> ItemStack.EMPTY;
+            case MODE -> Icons.button(Items.ARROW, BACK_LABEL, BACK_TO_TEAMS);
+            case DIFFICULTY -> Icons.button(Items.ARROW, BACK_LABEL, BACK_TO_MODE);
+        };
+    }
+
+    private static int indexOf(int[] slots, int slot) {
+        for (int i = 0; i < slots.length; i++) {
+            if (slots[i] == slot) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     @Override
     protected void onButton(int slot, int button) {
-        if (slot < TEAM_SLOTS) {
-            pressTeam(Datapack.TEAMS.get(slot));
-        } else if (MODE.owns(slot)) {
-            pressVote(MODE, slot - MODE.first());
-        } else if (DIFFICULTY.owns(slot)) {
-            pressVote(DIFFICULTY, slot - DIFFICULTY.first());
-        } else {
-            switch (slot) {
-                case START_NOW -> pressStartNow();
-                case READY -> pressReady();
-                case SETTINGS -> TriggerQueue.navigate(owner, TriggerQueue.Nav.SETTINGS);
-                case CLOSE -> TriggerQueue.navigate(owner, TriggerQueue.Nav.CLOSE);
-                default -> {
+        switch (slot) {
+            case READY -> pressReady();
+            case START_NOW -> pressStartNow();
+            case BACK -> pressBack();
+            default -> pressContent(slot);
+        }
+    }
+
+    private void pressContent(int slot) {
+        switch (page) {
+            case TEAMS -> {
+                int index = indexOf(TEAM_SLOTS, slot);
+                if (index >= 0) {
+                    pressTeam(Datapack.TEAMS.get(index));
                 }
+            }
+            case MODE -> {
+                int index = indexOf(OPTION_SLOTS, slot);
+                if (index >= 0) {
+                    pressVote(MODE, index);
+                }
+            }
+            case DIFFICULTY -> {
+                int index = indexOf(OPTION_SLOTS, slot);
+                if (index >= 0) {
+                    pressVote(DIFFICULTY, index);
+                }
+            }
+        }
+    }
+
+    private void pressBack() {
+        switch (page) {
+            case MODE -> TriggerQueue.navigate(owner, TriggerQueue.Nav.LOBBY_TEAMS);
+            case DIFFICULTY -> TriggerQueue.navigate(owner, TriggerQueue.Nav.LOBBY_MODE);
+            default -> {
             }
         }
     }
@@ -283,9 +326,11 @@ final class LobbyMenu extends LockedMenu {
             return;
         }
         if (color.equals(Datapack.team(owner)) && Datapack.isGamePlayer(owner)) {
+            TriggerQueue.navigate(owner, TriggerQueue.Nav.LOBBY_MODE);
             return;
         }
         TriggerQueue.enqueue(owner, Datapack.TEAM_JOIN + color, Datapack::canChooseTeam);
+        TriggerQueue.navigateAfterFlush(owner, TriggerQueue.Nav.LOBBY_MODE);
     }
 
     private void pressVote(Vote vote, int index) {
@@ -297,9 +342,15 @@ final class LobbyMenu extends LockedMenu {
         }
         String option = vote.options().get(index);
         if (option.equals(Datapack.ownVote(owner, vote.options()))) {
+            if (vote.mode()) {
+                TriggerQueue.navigate(owner, TriggerQueue.Nav.LOBBY_DIFFICULTY);
+            }
             return;
         }
         TriggerQueue.enqueue(owner, Datapack.VOTE + option, vote.gate());
+        if (vote.mode()) {
+            TriggerQueue.navigateAfterFlush(owner, TriggerQueue.Nav.LOBBY_DIFFICULTY);
+        }
     }
 
     private String voteBlocker(Vote vote, MinecraftServer server) {

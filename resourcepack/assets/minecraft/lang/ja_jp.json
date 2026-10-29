@@ -49,7 +49,7 @@
   "bingo.settings.vote": "モードと難易度の投票。",
   "bingo.settings.before_game": "ゲーム開始前に、コマンド「%s」で設定を行うことをおすすめします。",
   "bingo.settings.before_game_hint": "（アイテムリストの表示位置や他の項目を快適に設定できます。）",
-  "bingo.settings.command": "/trigger .bingo.settings",
+  "bingo.settings.command": "/bingo settings",
   "bingo.settings.timer.notifications_1": "画面上でアイテムリストを移動するには、コマンド「%s」を使用してください。",
   "bingo.settings.timer.notifications_2": "アイテムリストのサイズを変更するには、コマンド「%s」を使用してください。",
   "bingo.settings.timer.notifications_3": "リスト内のアイテム名を確認するには、コマンド「%s」を使用してください。",

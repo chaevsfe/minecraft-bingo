@@ -21,10 +21,9 @@ import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.item.component.ItemLore;
 
 final class CardMenu extends LockedMenu {
+    private static final String TITLE = "Bingo Card";
     private static final int SLOTS = 54;
-    private static final int BACK = 45;
     private static final int TEAM = 49;
-    private static final int CLOSE = 53;
 
     private CardMenu(int id, Inventory inventory, ServerPlayer owner) {
         super(MenuType.GENERIC_9x6, id, inventory, owner, 6);
@@ -35,7 +34,7 @@ final class CardMenu extends LockedMenu {
         if (!Datapack.inGame(player)) {
             return false;
         }
-        player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new CardMenu(id, inventory, (ServerPlayer) p), Component.literal("Bingo Card")));
+        player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new CardMenu(id, inventory, (ServerPlayer) p), Component.literal(TITLE)));
         return true;
     }
 
@@ -57,28 +56,16 @@ final class CardMenu extends LockedMenu {
             int cell = cellAt(slot);
             if (cell > 0) {
                 put(slot, cell(server, cell, collected));
-            } else if (slot == BACK) {
-                put(slot, Icons.button(Items.ARROW, "Back to settings"));
-            } else if (slot == TEAM) {
-                put(slot, team == null ? Icons.filler() : teamBadge(team, collected.size()));
-            } else if (slot == CLOSE) {
-                put(slot, Icons.button(Items.BARRIER, "Close"));
+            } else if (slot == TEAM && team != null) {
+                put(slot, teamBadge(team, collected.size()));
             } else {
-                put(slot, Icons.filler());
+                put(slot, ItemStack.EMPTY);
             }
         }
     }
 
     @Override
     protected void onButton(int slot, int button) {
-        if (slot == BACK) {
-            TriggerQueue.navigate(owner, TriggerQueue.Nav.SETTINGS);
-            return;
-        }
-        if (slot == CLOSE) {
-            TriggerQueue.navigate(owner, TriggerQueue.Nav.CLOSE);
-            return;
-        }
         int cell = cellAt(slot);
         if (cell == 0) {
             return;
