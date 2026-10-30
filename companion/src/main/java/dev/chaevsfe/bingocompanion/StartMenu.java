@@ -25,7 +25,7 @@ final class StartMenu extends LockedMenu {
     private static final String OPS_STOP = "Only operators can stop the run";
     private static final String KEEP = "Teleport: keep everyone at the start point";
     private static final int[] RADII = {1000, 5000, 10000, 25000, 100000};
-    private static final int[] TETHERS = {4, 8, 12, 16};
+    private static final int[] TETHERS = {4, 12, 32, 64};
     private static final String CYCLE = "Click to cycle teleport options";
     private static final String TETHER_CYCLE = "Click to cycle tether lengths";
     private static final String ADVANCEMENTS_ON = "Advancements: enabled";

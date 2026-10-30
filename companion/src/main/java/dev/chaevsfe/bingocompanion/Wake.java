@@ -211,7 +211,7 @@ final class Wake implements Runnable {
     private List<ServerPlayer> players() {
         List<ServerPlayer> out = new ArrayList<>();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            if (selection.contains(player.getUUID())) {
+            if (selection.contains(player.getUUID()) && !Transfer.bot(player)) {
                 out.add(player);
             }
         }

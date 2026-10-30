@@ -25,9 +25,14 @@ final class Transfer {
     static final int DEFAULT_TIMEOUT = 180;
     static final List<String> SELECTORS = List.of("@a", "@s");
     private static final DynamicCommandExceptionType NO_SUCH_PLAYER = new DynamicCommandExceptionType(name -> Component.literal("No player named " + name + " is online"));
+    private static final DynamicCommandExceptionType BOT = new DynamicCommandExceptionType(name -> Component.literal(name + " is a bot and stays on this server"));
     private static final DynamicCommandExceptionType SELECTOR_NOT_ALLOWED = new DynamicCommandExceptionType(token -> Component.literal("Use @a, @s or player names, not " + token));
 
     private Transfer() {
+    }
+
+    static boolean bot(ServerPlayer player) {
+        return player.getClass() != ServerPlayer.class;
     }
 
     static int send(CommandSourceStack source, String key, String selection) throws CommandSyntaxException {
@@ -65,7 +70,11 @@ final class Transfer {
             if (found.isEmpty() && !token.startsWith("@")) {
                 throw NO_SUCH_PLAYER.create(token);
             }
-            for (ServerPlayer player : found) {
+            List<ServerPlayer> people = found.stream().filter(player -> !bot(player)).toList();
+            if (people.isEmpty() && !token.startsWith("@")) {
+                throw BOT.create(token);
+            }
+            for (ServerPlayer player : people) {
                 out.add(player.getUUID());
             }
         }

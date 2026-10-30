@@ -55,6 +55,7 @@ final class Links {
         int totems;
         ResourceKey<Level> dimension;
         Vec3 position;
+        Set<UUID> pearls = Set.of();
         ResourceKey<Level> safeDimension;
         Vec3 safePosition;
     }
@@ -344,7 +345,7 @@ final class Links {
             return;
         }
         if (settings.tether() > 0) {
-            Tether.place(server, alive, arrived, TRACKS, settings.tether());
+            Tether.place(server, name, alive, arrived, TRACKS, settings.tether());
         }
         if (settings.health() && !shareHealth(server, group, alive, stable, ownRegen)) {
             if (run) {
@@ -358,7 +359,7 @@ final class Links {
         if (settings.hunger()) {
             shareHunger(group, alive, stable);
         }
-        if (settings.tether() > 0) {
+        if (settings.tether() > 0 && !Tether.following(name)) {
             Tether.pull(server, alive, TRACKS, settings.tether());
             if (rope) {
                 Tether.rope(alive, settings.tether(), run ? Icons.TEXT_COLOR : Icons.teamRgb(name));
@@ -595,6 +596,9 @@ final class Links {
             track.totems = totems(player);
             track.dimension = player.level().dimension();
             track.position = player.position();
+            Set<UUID> pearls = new HashSet<>();
+            player.getEnderPearls().forEach(pearl -> pearls.add(pearl.getUUID()));
+            track.pearls = pearls;
             if (Tether.safe(player)) {
                 track.safeDimension = track.dimension;
                 track.safePosition = track.position;

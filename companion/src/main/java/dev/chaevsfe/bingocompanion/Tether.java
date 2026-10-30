@@ -37,7 +37,8 @@ final class Tether {
     private static final double ROPE_HEIGHT = 0.9;
     private static final double ROPE_STEP = 0.35;
     private static final double SAG = 0.25;
-    private static final double MAX_SAG = 1.5;
+    private static final double MAX_SAG = ROPE_HEIGHT + 0.3;
+    private static final double PEARL_JUMP = 2.0;
     private static final int ROPE_POINTS = 64;
     private static final float ROPE_SIZE = 0.6F;
     private static final int HIDDEN_DEPTH = 64;
@@ -45,8 +46,15 @@ final class Tether {
     private record Sent(int tick, Vec3 push) {
     }
 
+    private record Follow(UUID mover, int since) {
+    }
+
     private static final Map<UUID, ArrayDeque<Sent>> SENT = new HashMap<>();
     private static final Map<UUID, Integer> SETTLING = new HashMap<>();
+    private static final Map<String, Follow> FOLLOWS = new HashMap<>();
+    private static final int FOLLOW_TICKS = 200;
+    private static final int FOLLOW_DELAY = 2;
+    private static final double GROUND_PROBE = 0.1;
 
     private Tether() {
     }
@@ -54,24 +62,54 @@ final class Tether {
     static void clear() {
         SENT.clear();
         SETTLING.clear();
+        FOLLOWS.clear();
     }
 
-    static void place(MinecraftServer server, List<ServerPlayer> chain, List<ServerPlayer> arrived, Map<UUID, Links.Track> tracks, int length) {
+    static boolean following(String group) {
+        return FOLLOWS.containsKey(group);
+    }
+
+    static void place(MinecraftServer server, String group, List<ServerPlayer> chain, List<ServerPlayer> arrived, Map<UUID, Links.Track> tracks, int length) {
+        int now = server.getTickCount();
+        Follow follow = FOLLOWS.get(group);
+        if (follow != null) {
+            ServerPlayer thrower = null;
+            for (ServerPlayer player : chain) {
+                if (player.getUUID().equals(follow.mover())) {
+                    thrower = player;
+                }
+            }
+            if (thrower == null || now - follow.since() > FOLLOW_TICKS) {
+                FOLLOWS.remove(group);
+            } else if (now - follow.since() >= FOLLOW_DELAY && safe(thrower)) {
+                FOLLOWS.remove(group);
+                settle(server, thrower, SETTLE_TICKS);
+                for (ServerPlayer player : chain) {
+                    if (player != thrower) {
+                        moveTo(server, player, thrower);
+                    }
+                }
+            }
+        }
         ServerPlayer mover = null;
+        boolean pearl = false;
         for (ServerPlayer player : chain) {
             Links.Track track = tracks.get(player.getUUID());
             if (arrived.contains(player) || track == null) {
                 continue;
             }
             boolean otherDimension = !player.level().dimension().equals(track.dimension);
-            boolean portalJump = !otherDimension && player.isOnPortalCooldown() && track.position != null
-                    && player.position().distanceTo(track.position) > length + SNAP;
-            if (otherDimension || portalJump) {
+            double jump = otherDimension || track.position == null ? 0.0 : player.position().distanceTo(track.position);
+            boolean portalJump = !otherDimension && player.isOnPortalCooldown() && jump > length + SNAP;
+            if (otherDimension || portalJump || pearlLanded(player, track, jump)) {
                 mover = player;
+                pearl = !otherDimension && !portalJump;
                 break;
             }
         }
-        if (mover != null) {
+        if (mover != null && pearl) {
+            FOLLOWS.put(group, new Follow(mover.getUUID(), now));
+        } else if (mover != null) {
             settle(server, mover, TRAVEL_TICKS);
             for (ServerPlayer player : chain) {
                 if (player != mover && (player.level() != mover.level() || player.distanceTo(mover) > length)) {
@@ -105,6 +143,15 @@ final class Tether {
         }
     }
 
+    private static boolean pearlLanded(ServerPlayer player, Links.Track track, double jump) {
+        if (track.pearls.isEmpty() || jump < PEARL_JUMP) {
+            return false;
+        }
+        Set<UUID> flying = new HashSet<>();
+        player.getEnderPearls().forEach(entity -> flying.add(entity.getUUID()));
+        return !flying.containsAll(track.pearls);
+    }
+
     private static ServerPlayer anchor(List<ServerPlayer> chain, List<ServerPlayer> anchors, ServerPlayer player) {
         int index = chain.indexOf(player);
         ServerPlayer fallback = null;
@@ -128,7 +175,8 @@ final class Tether {
     }
 
     static boolean safe(ServerPlayer player) {
-        return player.onGround() && !player.isInLiquid() && !player.isPassenger() && !player.isFallFlying();
+        boolean grounded = !player.level().noCollision(player, player.getBoundingBox().move(0.0, -GROUND_PROBE, 0.0));
+        return grounded && !player.isInLiquid() && !player.isPassenger() && !player.isFallFlying();
     }
 
     private static void settle(MinecraftServer server, ServerPlayer player, int ticks) {
