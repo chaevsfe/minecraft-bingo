@@ -18,7 +18,8 @@ final class StartMenu extends LockedMenu {
     private static final String OPENING = "Opening the lobby";
     private static final String SETTING_UP = "A game is being set up";
     private static final String KEEP = "Teleport: keep everyone at the start point";
-    private static final int[] RADII = {1000, 2000, 3000};
+    private static final int[] RADII = {1000, 5000, 10000, 25000, 100000};
+    private static final String CYCLE = "Click to cycle teleport options";
     private static final String ADVANCEMENTS_ON = "Advancements: enabled";
     private static final String ADVANCEMENTS_OFF = "Advancements: disabled";
     private static final String LOCATOR_ON = "Player locator: enabled";
@@ -47,7 +48,7 @@ final class StartMenu extends LockedMenu {
         if (!Datapack.canStart(player)) {
             return false;
         }
-        player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new StartMenu(id, inventory, (ServerPlayer) p), Component.literal(TITLE)));
+        Menus.open(player, new SimpleMenuProvider((id, inventory, p) -> new StartMenu(id, inventory, (ServerPlayer) p), Component.literal(TITLE)));
         return true;
     }
 
@@ -104,12 +105,10 @@ final class StartMenu extends LockedMenu {
     }
 
     private ItemStack teleportItem() {
-        if (teleport >= RADII.length) {
-            return Icons.toggle(Items.ENDER_PEARL, KEEP, false, "Teams spawn within 10 blocks of the start point", "Click to spread the teams up to " + RADII[0] + " blocks from the start");
+        if (teleport == 0) {
+            return Icons.toggle(Items.ENDER_PEARL, KEEP, false, "Teams spawn within 10 blocks of the start", CYCLE);
         }
-        int radius = RADII[teleport];
-        String next = teleport + 1 < RADII.length ? "Click for up to " + RADII[teleport + 1] + " blocks" : "Click to keep everyone at the start point";
-        return Icons.toggle(Items.ENDER_PEARL, "Teleport: spread up to " + radius + " blocks", true, "Teams are spread randomly, up to " + radius + " blocks from the start", next);
+        return Icons.toggle(Items.ENDER_PEARL, "Teleport: spread up to " + String.format("%,d", RADII[teleport - 1]) + " blocks", true, "Teams are spread randomly", CYCLE);
     }
 
     private ItemStack startItem() {
@@ -168,8 +167,8 @@ final class StartMenu extends LockedMenu {
         wizard = owner.getUUID();
         wizardSince = server.getTickCount();
         starting = true;
-        boolean spread = teleport < RADII.length;
-        Datapack.setRadius(server, spread ? RADII[teleport] : RADII[0]);
+        boolean spread = teleport > 0;
+        Datapack.setRadius(server, spread ? RADII[teleport - 1] : RADII[0]);
         TriggerQueue.enqueue(owner, Datapack.START, Datapack::canStartAs);
         TriggerQueue.enqueue(owner, spread ? Datapack.TP_YES : Datapack.TP_NO, Datapack::wizardTp);
         TriggerQueue.enqueue(owner, advancements ? Datapack.ADVANCEMENTS_ON : Datapack.ADVANCEMENTS_OFF, Datapack::wizardAdvancement);

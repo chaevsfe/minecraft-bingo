@@ -42,7 +42,7 @@ final class SettingsMenu extends LockedMenu {
 
     static void open(ServerPlayer player) {
         player.addTag(Datapack.TAG_TRAINING);
-        player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new SettingsMenu(id, inventory, (ServerPlayer) p), Component.literal(TITLE)));
+        Menus.open(player, new SimpleMenuProvider((id, inventory, p) -> new SettingsMenu(id, inventory, (ServerPlayer) p), Component.literal(TITLE)));
     }
 
     @Override

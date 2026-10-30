@@ -109,7 +109,7 @@ final class LobbyMenu extends LockedMenu {
         if (!Datapack.lobby(player)) {
             return false;
         }
-        player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new LobbyMenu(id, inventory, (ServerPlayer) p, page), Component.literal(page.title)));
+        Menus.open(player, new SimpleMenuProvider((id, inventory, p) -> new LobbyMenu(id, inventory, (ServerPlayer) p, page), Component.literal(page.title)));
         return true;
     }
 

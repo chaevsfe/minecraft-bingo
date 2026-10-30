@@ -39,7 +39,7 @@ final class CardMenu extends LockedMenu {
         if (!Datapack.inGame(player)) {
             return false;
         }
-        player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new CardMenu(id, inventory, (ServerPlayer) p), Component.literal(TITLE)));
+        Menus.open(player, new SimpleMenuProvider((id, inventory, p) -> new CardMenu(id, inventory, (ServerPlayer) p), Component.literal(TITLE)));
         return true;
     }
 
