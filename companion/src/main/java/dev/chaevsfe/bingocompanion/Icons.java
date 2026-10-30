@@ -93,6 +93,20 @@ final class Icons {
         };
     }
 
+    static int teamRgb(String team) {
+        return switch (team) {
+            case "red" -> 0xFF5555;
+            case "dark_red" -> 0xAA0000;
+            case "yellow" -> 0xFFFF55;
+            case "gold" -> 0xFFAA00;
+            case "aqua" -> 0x55FFFF;
+            case "green" -> 0x55FF55;
+            case "blue" -> 0x5555FF;
+            case "light_purple" -> 0xFF55FF;
+            default -> 0xFFFFFF;
+        };
+    }
+
     static String teamName(String team) {
         StringBuilder name = new StringBuilder();
         for (String word : team.split("_")) {

@@ -1,5 +1,6 @@
 package dev.chaevsfe.bingocompanion;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.stream.Stream;
@@ -15,6 +16,8 @@ final class Guards {
     private static final String RESET_DENIED = "Only operators can reset the Bingo game";
     private static final String VOTE_NEEDS_TEAM = "Pick a team before voting";
     private static final String GAME_OVER = "Your previous Bingo game is over";
+    private static final List<String> WIZARD = List.of(Datapack.START, Datapack.TP_YES, Datapack.TP_NO, Datapack.ADVANCEMENTS_ON,
+            Datapack.ADVANCEMENTS_OFF, Datapack.LOCATOR_ON, Datapack.LOCATOR_OFF);
     private static final List<String> VOTES = Stream.concat(Datapack.MODES.stream(), Datapack.DIFFICULTIES.stream()).toList();
 
     private Guards() {
@@ -23,6 +26,15 @@ final class Guards {
     static void startTick(MinecraftServer server) {
         Scoreboard scoreboard = server.getScoreboard();
         Objective reset = scoreboard.getObjective(Datapack.RESET_TRIGGER);
+        List<Objective> wizard = new ArrayList<>();
+        if (Run.active(server) || Run.pending()) {
+            for (String name : WIZARD) {
+                Objective objective = scoreboard.getObjective(name);
+                if (objective != null) {
+                    wizard.add(objective);
+                }
+            }
+        }
         boolean lobby = Datapack.lobby(server);
         boolean lockTeams = lobby && Datapack.dealt(server);
         boolean running = Datapack.running(server);
@@ -42,6 +54,13 @@ final class Guards {
                 }
             } else if (companion != null && scoreboard.getPlayerScoreInfo(player, companion) != null) {
                 scoreboard.resetSinglePlayerScore(player, companion);
+            }
+            boolean refused = false;
+            for (Objective objective : wizard) {
+                refused |= clear(scoreboard, player, objective);
+            }
+            if (refused) {
+                player.sendSystemMessage(Component.literal(Run.ALREADY_RUNNING).withStyle(ChatFormatting.RED));
             }
             if (reset != null && !Datapack.isOp(player) && clear(scoreboard, player, reset)) {
                 player.sendSystemMessage(Component.literal(RESET_DENIED).withStyle(ChatFormatting.RED));

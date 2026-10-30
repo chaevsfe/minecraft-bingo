@@ -28,9 +28,15 @@ public final class BingoCompanion implements ModInitializer {
         ServerTickEvents.END_SERVER_TICK.register(TriggerQueue::endTick);
         ServerTickEvents.END_SERVER_TICK.register(Lobby::endTick);
         ServerTickEvents.END_SERVER_TICK.register(StartMenu::endTick);
+        ServerTickEvents.END_SERVER_TICK.register(Run::endTick);
+        ServerTickEvents.END_SERVER_TICK.register(Links::endTick);
+        ServerLifecycleEvents.SERVER_STARTED.register(Run::started);
+        ServerLifecycleEvents.SERVER_STARTED.register(Links::started);
         ServerLifecycleEvents.SERVER_STOPPED.register(StartMenu::clear);
         ServerLifecycleEvents.SERVER_STOPPED.register(Lobby::clear);
         ServerLifecycleEvents.SERVER_STOPPED.register(LobbyItem::clear);
+        ServerLifecycleEvents.SERVER_STOPPED.register(Run::clear);
+        ServerLifecycleEvents.SERVER_STOPPED.register(Links::clear);
         ServerLifecycleEvents.SERVER_STOPPED.register(WorldReset::stopped);
         ServerLifecycleEvents.SERVER_STARTING.register(WorldReset::starting);
     }

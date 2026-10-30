@@ -100,6 +100,10 @@ final class BingoCommands {
         if (!Datapack.packLoaded(server)) {
             return fail(source, NOT_LOADED);
         }
+        if (Run.active(server)) {
+            StartMenu.open(player);
+            return 1;
+        }
         if (Datapack.inGame(player) && Datapack.dealt(server)) {
             SettingsMenu.open(player);
             return 1;
@@ -140,9 +144,16 @@ final class BingoCommands {
         if (!Datapack.packLoaded(server)) {
             return fail(source, NOT_LOADED);
         }
+        if (Run.active(server)) {
+            StartMenu.open(player);
+            return 1;
+        }
         if (Datapack.running(server)) {
             TriggerQueue.enqueue(player, Datapack.START, Datapack::gameRunning);
             return 1;
+        }
+        if (Run.pending()) {
+            return fail(source, Run.ALREADY_RUNNING);
         }
         ServerPlayer setter = Datapack.settingUp(server);
         if (setter != null) {
@@ -164,7 +175,12 @@ final class BingoCommands {
     }
 
     private static int reset(CommandSourceStack source) {
-        if (!Datapack.runReset(source.getServer())) {
+        MinecraftServer server = source.getServer();
+        boolean stopped = Run.active(server);
+        if (stopped) {
+            Run.stop(server);
+        }
+        if (!Datapack.runReset(server) && !stopped) {
             return fail(source, NOT_LOADED);
         }
         return 1;

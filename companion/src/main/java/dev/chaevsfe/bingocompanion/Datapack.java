@@ -19,6 +19,7 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.ReadOnlyScoreInfo;
 import net.minecraft.world.scores.ScoreHolder;
 import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
 final class Datapack {
     static final String START = ".bingo.start";
@@ -110,6 +111,15 @@ final class Datapack {
         return server.getScoreboard().getObjective(name);
     }
 
+    static Objective dummy(MinecraftServer server, String name) {
+        Scoreboard scoreboard = server.getScoreboard();
+        Objective objective = scoreboard.getObjective(name);
+        if (objective == null) {
+            objective = scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.DUMMY.getDefaultRenderType(), false, null);
+        }
+        return objective;
+    }
+
     static boolean packLoaded(MinecraftServer server) {
         return objective(server, START) != null;
     }
@@ -192,12 +202,12 @@ final class Datapack {
 
     static boolean canStart(ServerPlayer player) {
         MinecraftServer server = server(player);
-        return !running(server) && settingUp(server) == null;
+        return !running(server) && settingUp(server) == null && !Run.active(server) && !Run.pending();
     }
 
     static boolean canStartAs(ServerPlayer player) {
         MinecraftServer server = server(player);
-        if (running(server)) {
+        if (running(server) || Run.active(server) || Run.pending()) {
             return false;
         }
         ServerPlayer setter = settingUp(server);
