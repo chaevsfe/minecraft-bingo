@@ -2,8 +2,11 @@ package dev.chaevsfe.bingocompanion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.OptionalInt;
+import java.util.UUID;
 import java.util.function.Predicate;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -43,14 +46,18 @@ final class LobbyMenu extends LockedMenu {
     private static final String PAUSE_LABEL = "Pause";
     private static final String RESUME_LABEL = "Resume";
     private static final String BACK_LABEL = "Back";
-    private static final String BACK_TO_TEAMS = "To the team page";
-    private static final String BACK_TO_MODE = "To the mode page";
+    private static final String NEXT_LABEL = "Next";
+    private static final String TO_TEAMS = "To the team page";
+    private static final String TO_MODE = "To the mode page";
+    private static final String TO_DIFFICULTY = "To the difficulty page";
+    private static final Map<UUID, Page> LAST = new HashMap<>();
     private static final int SLOTS = 27;
     private static final int CLOCK = 7;
     private static final int PLAYERS = 8;
     private static final int READY = 16;
     private static final int START_NOW = 17;
-    private static final int BACK = 26;
+    private static final int BACK = 25;
+    private static final int NEXT = 26;
     private static final int[] TEAM_SLOTS = {2, 3, 4, 11, 12, 13, 20, 21, 22};
     private static final int[] OPTION_SLOTS = {10, 12, 14};
     private static final int MAX_COUNT = 64;
@@ -90,7 +97,12 @@ final class LobbyMenu extends LockedMenu {
     private LobbyMenu(int id, Inventory inventory, ServerPlayer owner, Page page) {
         super(MenuType.GENERIC_9x3, id, inventory, owner, 3);
         this.page = page;
+        LAST.put(owner.getUUID(), page);
         draw();
+    }
+
+    static Page lastPage(ServerPlayer player) {
+        return LAST.getOrDefault(player.getUUID(), Page.TEAMS);
     }
 
     static boolean open(ServerPlayer player, Page page) {
@@ -127,6 +139,7 @@ final class LobbyMenu extends LockedMenu {
         stacks[READY] = readyItem(server, open, players.size());
         stacks[START_NOW] = startNow(server, players.size());
         stacks[BACK] = back();
+        stacks[NEXT] = next();
         for (int slot = 0; slot < SLOTS; slot++) {
             put(slot, stacks[slot]);
         }
@@ -134,12 +147,15 @@ final class LobbyMenu extends LockedMenu {
 
     private ItemStack teamCell(MinecraftServer server, String color, boolean open, boolean joined, String ownTeam) {
         List<ServerPlayer> members = Datapack.teamMembers(server, color);
+        ChatFormatting teamColor = Icons.teamColor(color);
         List<Component> lore = new ArrayList<>();
-        for (ServerPlayer member : members) {
-            lore.add(Icons.line(member.getScoreboardName(), ChatFormatting.WHITE));
-        }
         if (members.isEmpty()) {
             lore.add(Icons.line("No players yet"));
+        } else {
+            lore.add(Icons.line("Players: " + members.size(), ChatFormatting.WHITE));
+        }
+        for (ServerPlayer member : members) {
+            lore.add(Icons.line(member.getScoreboardName(), teamColor));
         }
         String label = Icons.teamName(color);
         if (!Datapack.canChooseTeam(owner)) {
@@ -152,7 +168,6 @@ final class LobbyMenu extends LockedMenu {
         } else {
             lore.add(Icons.line(joined ? "Click to switch" : "Click to join"));
         }
-        ChatFormatting teamColor = Icons.teamColor(color);
         Component name = Component.literal(label).withStyle(style -> style.withItalic(false).withColor(teamColor));
         return Icons.button(Icons.teamWool(color), Math.max(1, members.size()), name, lore, mine);
     }
@@ -289,8 +304,16 @@ final class LobbyMenu extends LockedMenu {
     private ItemStack back() {
         return switch (page) {
             case TEAMS -> ItemStack.EMPTY;
-            case MODE -> Icons.button(Items.ARROW, BACK_LABEL, BACK_TO_TEAMS);
-            case DIFFICULTY -> Icons.button(Items.ARROW, BACK_LABEL, BACK_TO_MODE);
+            case MODE -> Icons.button(Items.ARROW, BACK_LABEL, TO_TEAMS);
+            case DIFFICULTY -> Icons.button(Items.ARROW, BACK_LABEL, TO_MODE);
+        };
+    }
+
+    private ItemStack next() {
+        return switch (page) {
+            case TEAMS -> Icons.button(Items.SPECTRAL_ARROW, NEXT_LABEL, TO_MODE);
+            case MODE -> Icons.button(Items.SPECTRAL_ARROW, NEXT_LABEL, TO_DIFFICULTY);
+            case DIFFICULTY -> ItemStack.EMPTY;
         };
     }
 
@@ -313,6 +336,7 @@ final class LobbyMenu extends LockedMenu {
             case READY -> pressReady();
             case START_NOW -> pressStartNow();
             case BACK -> pressBack();
+            case NEXT -> pressNext();
             default -> pressContent(slot);
         }
     }
@@ -344,6 +368,15 @@ final class LobbyMenu extends LockedMenu {
         switch (page) {
             case MODE -> TriggerQueue.navigate(owner, TriggerQueue.Nav.LOBBY_TEAMS);
             case DIFFICULTY -> TriggerQueue.navigate(owner, TriggerQueue.Nav.LOBBY_MODE);
+            default -> {
+            }
+        }
+    }
+
+    private void pressNext() {
+        switch (page) {
+            case TEAMS -> TriggerQueue.navigate(owner, TriggerQueue.Nav.LOBBY_MODE);
+            case MODE -> TriggerQueue.navigate(owner, TriggerQueue.Nav.LOBBY_DIFFICULTY);
             default -> {
             }
         }

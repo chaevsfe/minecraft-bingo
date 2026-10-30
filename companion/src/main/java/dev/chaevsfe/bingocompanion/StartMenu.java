@@ -17,8 +17,8 @@ final class StartMenu extends LockedMenu {
     private static final String STARTING = "Starting...";
     private static final String OPENING = "Opening the lobby";
     private static final String SETTING_UP = "A game is being set up";
-    private static final String SPREAD = "Teleport: spread randomly";
     private static final String KEEP = "Teleport: keep everyone at the start point";
+    private static final int[] RADII = {1000, 2000, 3000};
     private static final String ADVANCEMENTS_ON = "Advancements: enabled";
     private static final String ADVANCEMENTS_OFF = "Advancements: disabled";
     private static final String LOCATOR_ON = "Player locator: enabled";
@@ -33,7 +33,7 @@ final class StartMenu extends LockedMenu {
     private static UUID wizard;
     private static int wizardSince;
 
-    private boolean spread = true;
+    private int teleport;
     private boolean advancements = true;
     private boolean locator = true;
     private boolean starting;
@@ -90,9 +90,7 @@ final class StartMenu extends LockedMenu {
     protected void draw() {
         for (int slot = 0; slot < SLOTS; slot++) {
             put(slot, switch (slot) {
-                case TELEPORT -> spread
-                        ? Icons.toggle(Items.ENDER_PEARL, SPREAD, true, "Teams are spread up to 1000 blocks apart", "Click to keep everyone at the start point")
-                        : Icons.toggle(Items.ENDER_PEARL, KEEP, false, "Teams spawn within 10 blocks of the start point", "Click to spread the teams randomly");
+                case TELEPORT -> teleportItem();
                 case ADVANCEMENTS -> advancements
                         ? Icons.toggle(Items.KNOWLEDGE_BOOK, ADVANCEMENTS_ON, true, "Advancements trigger during the game", "Click to disable them")
                         : Icons.toggle(Items.KNOWLEDGE_BOOK, ADVANCEMENTS_OFF, false, "All advancements are disabled during the game", "Click to enable them");
@@ -103,6 +101,15 @@ final class StartMenu extends LockedMenu {
                 default -> ItemStack.EMPTY;
             });
         }
+    }
+
+    private ItemStack teleportItem() {
+        if (teleport >= RADII.length) {
+            return Icons.toggle(Items.ENDER_PEARL, KEEP, false, "Teams spawn within 10 blocks of the start point", "Click to spread the teams up to " + RADII[0] + " blocks from the start");
+        }
+        int radius = RADII[teleport];
+        String next = teleport + 1 < RADII.length ? "Click for up to " + RADII[teleport + 1] + " blocks" : "Click to keep everyone at the start point";
+        return Icons.toggle(Items.ENDER_PEARL, "Teleport: spread up to " + radius + " blocks", true, "Teams are spread randomly, up to " + radius + " blocks from the start", next);
     }
 
     private ItemStack startItem() {
@@ -137,7 +144,7 @@ final class StartMenu extends LockedMenu {
             return;
         }
         switch (which) {
-            case 0 -> spread = !spread;
+            case 0 -> teleport = (teleport + 1) % (RADII.length + 1);
             case 1 -> advancements = !advancements;
             default -> locator = !locator;
         }
@@ -161,6 +168,8 @@ final class StartMenu extends LockedMenu {
         wizard = owner.getUUID();
         wizardSince = server.getTickCount();
         starting = true;
+        boolean spread = teleport < RADII.length;
+        Datapack.setRadius(server, spread ? RADII[teleport] : RADII[0]);
         TriggerQueue.enqueue(owner, Datapack.START, Datapack::canStartAs);
         TriggerQueue.enqueue(owner, spread ? Datapack.TP_YES : Datapack.TP_NO, Datapack::wizardTp);
         TriggerQueue.enqueue(owner, advancements ? Datapack.ADVANCEMENTS_ON : Datapack.ADVANCEMENTS_OFF, Datapack::wizardAdvancement);

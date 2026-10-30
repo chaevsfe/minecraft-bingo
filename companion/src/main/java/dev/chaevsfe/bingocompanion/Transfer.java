@@ -15,6 +15,7 @@ import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
 
 final class Transfer {
     static final String BINGO = "bingo";
@@ -60,7 +61,7 @@ final class Transfer {
             if (reader.canRead()) {
                 throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(reader);
             }
-            List<ServerPlayer> found = selector.findPlayers(source);
+            List<ServerPlayer> found = selector.findPlayers(source.withPermission(LevelBasedPermissionSet.GAMEMASTER));
             if (found.isEmpty() && !token.startsWith("@")) {
                 throw NO_SUCH_PLAYER.create(token);
             }

@@ -84,6 +84,7 @@ final class Datapack {
     static final ScoreHolder TIMER_HOLDER = ScoreHolder.forNameOnly("timer");
     static final ScoreHolder COUNT_HOLDER = ScoreHolder.forNameOnly("count");
     static final ScoreHolder TP_HOLDER = ScoreHolder.forNameOnly("tp");
+    static final ScoreHolder RADIUS_HOLDER = ScoreHolder.forNameOnly("radius");
 
     private static final String LAUNCH = "bingo.start.launch.receipt";
     private static final String LOBBY = "bingo.start.enable.trigger";
@@ -179,6 +180,14 @@ final class Datapack {
 
     static String settingUpText(ServerPlayer setter) {
         return "A game is being set up by " + setter.getScoreboardName();
+    }
+
+    static void setRadius(MinecraftServer server, int radius) {
+        Scoreboard scoreboard = server.getScoreboard();
+        Objective objective = scoreboard.getObjective(TP_TYPE);
+        if (objective != null) {
+            scoreboard.getOrCreatePlayerScore(RADIUS_HOLDER, objective).set(radius);
+        }
     }
 
     static boolean canStart(ServerPlayer player) {

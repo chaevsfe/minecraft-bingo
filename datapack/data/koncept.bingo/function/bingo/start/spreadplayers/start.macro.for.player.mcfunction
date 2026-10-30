@@ -1,6 +1,7 @@
 # Project created by the koncept
 say начало команды
-data modify storage bingo.macro.destroy input set value {"x":0}
+data modify storage bingo.macro.destroy input set value {"x":0,"r":1000}
+execute if score radius bingo.type.tp matches 1.. store result storage minecraft:bingo.macro.destroy input.r int 1 run scoreboard players get radius bingo.type.tp
 
 execute as @s[team=blue.bingo] run data modify storage minecraft:bingo.macro.destroy input.x set value blue
 execute as @s[team=blue.bingo] run data modify storage minecraft:bingo.macro.destroy input.y set value blue

@@ -8,7 +8,7 @@ $effect give @a[team=$(x).bingo] minecraft:saturation 1 55 true
 
 $execute as @r[team=$(x).bingo] at @s run tag @s add bingo.tpr.$(x)
 
-$execute if score tp bingo.type.tp matches 1 run execute as @a[tag=bingo.tpr.$(x)] at @s run spreadplayers ~ ~ 0 1000 false @s
+$execute if score tp bingo.type.tp matches 1 run execute as @a[tag=bingo.tpr.$(x)] at @s run spreadplayers ~ ~ 0 $(r) false @s
 
 $execute as @a[tag=bingo.tpr.$(x)] at @s run spreadplayers ~ ~ 0 10 false @s
 

@@ -44,7 +44,10 @@ final class BingoCommands {
                         .executes(c -> openLobby(c.getSource())))
                 .then(Commands.literal("reset")
                         .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                        .executes(c -> reset(c.getSource())))
+                        .executes(c -> reset(c.getSource()))
+                        .then(Commands.literal("world")
+                                .requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
+                                .executes(c -> WorldReset.toggle(c.getSource()))))
                 .then(transfer("return", Transfer.VANILLA)));
     }
 
@@ -52,7 +55,6 @@ final class BingoCommands {
         return Commands.literal(name)
                 .executes(c -> Transfer.send(c.getSource(), key, null))
                 .then(Commands.argument("players", StringArgumentType.greedyString())
-                        .requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
                         .suggests(BingoCommands::suggestPlayers)
                         .executes(c -> Transfer.send(c.getSource(), key, StringArgumentType.getString(c, "players"))));
     }
