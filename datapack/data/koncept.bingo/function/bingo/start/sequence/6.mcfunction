@@ -30,12 +30,12 @@ execute if score win bingo.vote.type.win matches 3 run data modify storage bingo
 
 # If the player has never adjusted the display of the list, set the optimal value
 execute as @a[tag=bingo.game.player,tag=!bingo.actionbar.start] run function koncept.bingo:bingo/bossbar/add/start
-scoreboard players set @a[tag=bingo.game.player,tag=!bingo.actionbar.start] bingo.icon.size 16
-scoreboard players set @a[tag=bingo.game.player,tag=!bingo.actionbar.start] bingo.timer.game.settings 1
+execute as @a[tag=bingo.game.player,tag=!bingo.actionbar.start] unless score @s bingo.icon.size = @s bingo.icon.size run scoreboard players set @s bingo.icon.size 16
+execute as @a[tag=bingo.game.player,tag=!bingo.actionbar.start] unless score @s bingo.timer.game.settings = @s bingo.timer.game.settings run scoreboard players set @s bingo.timer.game.settings 1
 scoreboard players set @a[tag=bingo.game.player,tag=!bingo.actionbar.start] bottom.gui.Scale 1
 tag @a[tag=bingo.game.player,tag=!bingo.actionbar.start] add bingo.actionbar.top
-scoreboard players set @a[tag=bingo.game.player,tag=!bingo.actionbar.start] bingo.space 0
-scoreboard players set @a[tag=bingo.game.player,tag=!bingo.actionbar.start] bingo.vertical 0
+execute as @a[tag=bingo.game.player,tag=!bingo.actionbar.start] unless score @s bingo.space = @s bingo.space run scoreboard players set @s bingo.space 0
+execute as @a[tag=bingo.game.player,tag=!bingo.actionbar.start] unless score @s bingo.vertical = @s bingo.vertical run scoreboard players set @s bingo.vertical 0
 tag @a[tag=bingo.game.player,tag=!bingo.actionbar.start] add bingo.actionbar.left
 tag @a[tag=bingo.game.player,tag=!bingo.actionbar.start] add bingo.actionbar.start
 

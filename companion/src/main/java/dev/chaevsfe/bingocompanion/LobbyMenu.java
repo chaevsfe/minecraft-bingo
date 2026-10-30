@@ -41,7 +41,7 @@ final class LobbyMenu extends LockedMenu {
     private static final String PICK_TEAM_TO_VOTE = "Pick a team to vote";
     private static final String VOTE_PENDING = "Voting is not open yet";
     private static final String VOTE_CLOSED = "Voting has closed";
-    private static final String START_NOW_LABEL = "Start now (op)";
+    private static final String START_NOW_LABEL = "Start now";
     private static final String READY_LABEL = "Ready";
     private static final String PAUSE_LABEL = "Pause";
     private static final String RESUME_LABEL = "Resume";
@@ -274,8 +274,17 @@ final class LobbyMenu extends LockedMenu {
         if (players.isEmpty()) {
             lore.add(Icons.line(Lobby.NOBODY_JOINED));
         }
-        int count = Datapack.playerCount(server);
-        return Icons.button(Items.PLAYER_HEAD, Math.max(1, count), Component.literal("Players: " + count), lore, false);
+        List<String> waiting = new ArrayList<>();
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            if (!Datapack.isGamePlayer(player)) {
+                waiting.add(player.getScoreboardName());
+            }
+        }
+        if (!waiting.isEmpty()) {
+            lore.add(Icons.line("Not in a team: " + String.join(", ", waiting)));
+        }
+        int online = server.getPlayerList().getPlayers().size();
+        return Icons.button(Items.PLAYER_HEAD, Math.max(1, players.size()), Component.literal("Players: " + players.size() + " of " + online), lore, false);
     }
 
     private ItemStack startNow(MinecraftServer server, int players) {
@@ -311,8 +320,8 @@ final class LobbyMenu extends LockedMenu {
 
     private ItemStack next() {
         return switch (page) {
-            case TEAMS -> Icons.button(Items.SPECTRAL_ARROW, NEXT_LABEL, TO_MODE);
-            case MODE -> Icons.button(Items.SPECTRAL_ARROW, NEXT_LABEL, TO_DIFFICULTY);
+            case TEAMS -> Icons.button(Items.SPECTRAL_ARROW, 1, NEXT_LABEL, Datapack.isGamePlayer(owner), TO_MODE);
+            case MODE -> Icons.button(Items.SPECTRAL_ARROW, 1, NEXT_LABEL, Datapack.ownVote(owner, MODE.options()) != null, TO_DIFFICULTY);
             case DIFFICULTY -> ItemStack.EMPTY;
         };
     }
@@ -388,11 +397,9 @@ final class LobbyMenu extends LockedMenu {
             return;
         }
         if (color.equals(Datapack.team(owner)) && Datapack.isGamePlayer(owner)) {
-            TriggerQueue.navigate(owner, TriggerQueue.Nav.LOBBY_MODE);
             return;
         }
         TriggerQueue.enqueue(owner, Datapack.TEAM_JOIN + color, Datapack::canChooseTeam);
-        TriggerQueue.navigateAfterFlush(owner, TriggerQueue.Nav.LOBBY_MODE);
     }
 
     private void pressVote(Vote vote, int index) {
@@ -404,15 +411,9 @@ final class LobbyMenu extends LockedMenu {
         }
         String option = vote.options().get(index);
         if (option.equals(Datapack.ownVote(owner, vote.options()))) {
-            if (vote.mode()) {
-                TriggerQueue.navigate(owner, TriggerQueue.Nav.LOBBY_DIFFICULTY);
-            }
             return;
         }
         TriggerQueue.enqueue(owner, Datapack.VOTE + option, vote.gate());
-        if (vote.mode()) {
-            TriggerQueue.navigateAfterFlush(owner, TriggerQueue.Nav.LOBBY_DIFFICULTY);
-        }
     }
 
     private String voteBlocker(Vote vote, MinecraftServer server) {
