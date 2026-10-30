@@ -50,8 +50,9 @@ final class BingoCommands {
 
     private static LiteralArgumentBuilder<CommandSourceStack> transfer(String name, String key) {
         return Commands.literal(name)
-                .requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
+                .executes(c -> Transfer.send(c.getSource(), key, null))
                 .then(Commands.argument("players", StringArgumentType.greedyString())
+                        .requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
                         .suggests(BingoCommands::suggestPlayers)
                         .executes(c -> Transfer.send(c.getSource(), key, StringArgumentType.getString(c, "players"))));
     }

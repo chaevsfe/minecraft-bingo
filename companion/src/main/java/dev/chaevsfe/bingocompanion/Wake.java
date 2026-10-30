@@ -14,6 +14,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,6 +60,7 @@ final class Wake implements Runnable {
     private final String label;
     private final Transfer.Target target;
     private final Set<UUID> selection;
+    private final List<CommandSourceStack> sources = new CopyOnWriteArrayList<>();
     private final int timeoutSeconds;
     private final long started = System.nanoTime();
     private volatile boolean cancelled;
@@ -72,21 +75,39 @@ final class Wake implements Runnable {
         this.target = target;
         this.selection = selection;
         this.timeoutSeconds = timeoutSeconds;
+        sources.add(source);
     }
 
-    static boolean start(CommandSourceStack source, String label, Transfer.Target target, Set<UUID> selection, int timeoutSeconds) {
-        Wake wake = new Wake(source.getServer(), source, label, target, selection, timeoutSeconds);
+    static void start(CommandSourceStack source, String label, Transfer.Target target, Set<UUID> selection, int timeoutSeconds) {
+        Wake wake = new Wake(source.getServer(), source, label, target, ConcurrentHashMap.newKeySet(), timeoutSeconds);
+        wake.selection.addAll(selection);
         if (timeoutSeconds <= 0) {
             wake.transfer();
-            return true;
+            return;
         }
-        if (!ACTIVE.compareAndSet(null, wake)) {
-            return false;
+        while (!ACTIVE.compareAndSet(null, wake)) {
+            Wake active = ACTIVE.get();
+            if (active == null) {
+                continue;
+            }
+            if (!active.target.equals(target)) {
+                source.sendFailure(Component.literal("Already waking " + label));
+                return;
+            }
+            int added = 0;
+            for (UUID id : selection) {
+                if (active.selection.add(id)) {
+                    added++;
+                }
+            }
+            active.sources.add(source);
+            int count = added;
+            source.sendSystemMessage(Component.literal("Already waking " + label + ", added " + count + " player(s)"));
+            return;
         }
         Thread thread = new Thread(wake, "bingo-wake");
         thread.setDaemon(true);
         thread.start();
-        return true;
     }
 
     static void cancel(MinecraftServer server) {
@@ -157,7 +178,11 @@ final class Wake implements Runnable {
             fail("None of those players are online");
             return;
         }
-        source.sendSuccess(() -> Component.literal("Sending " + players.size() + " player(s) to " + target.host() + ":" + target.port()), true);
+        Component message = Component.literal("Sending " + players.size() + " player(s) to " + target.host() + ":" + target.port());
+        LOGGER.info(message.getString());
+        for (CommandSourceStack requester : sources) {
+            requester.sendSystemMessage(message);
+        }
         for (ServerPlayer player : players) {
             player.connection.send(new ClientboundTransferPacket(target.host(), target.port()));
         }
@@ -178,7 +203,9 @@ final class Wake implements Runnable {
 
     private void fail(String message) {
         LOGGER.warn(message);
-        source.sendFailure(Component.literal(message));
+        for (CommandSourceStack requester : sources) {
+            requester.sendFailure(Component.literal(message));
+        }
     }
 
     private List<ServerPlayer> players() {

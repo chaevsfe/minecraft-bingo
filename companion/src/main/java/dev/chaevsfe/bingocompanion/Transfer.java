@@ -40,16 +40,12 @@ final class Transfer {
             source.sendFailure(Component.literal(e.getMessage()));
             return 0;
         }
-        Set<UUID> players = select(source, selection);
+        Set<UUID> players = selection == null ? Set.of(source.getPlayerOrException().getUUID()) : select(source, selection);
         if (players.isEmpty()) {
             source.sendFailure(Component.literal("No players matched"));
             return 0;
         }
-        String label = key.equals(BINGO) ? "the Bingo server" : "the main server";
-        if (!Wake.start(source, label, target, players, timeout)) {
-            source.sendFailure(Component.literal("Already waking " + label));
-            return 0;
-        }
+        Wake.start(source, key.equals(BINGO) ? "the Bingo server" : "the main server", target, players, timeout);
         return 1;
     }
 
