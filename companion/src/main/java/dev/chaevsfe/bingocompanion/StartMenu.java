@@ -37,8 +37,9 @@ final class StartMenu extends LockedMenu {
     private static final int TELEPORT = 10;
     private static final int ADVANCEMENTS = 11;
     private static final int LOCATOR = 12;
-    private static final int HEALTH = 14;
-    private static final int HUNGER = 15;
+    private static final int HEALTH = 13;
+    private static final int HUNGER = 14;
+    private static final int INVENTORY = 15;
     private static final int TETHER = 16;
     private static final int START = 22;
     private static final int WIZARD_TICKS = 20;
@@ -54,6 +55,7 @@ final class StartMenu extends LockedMenu {
     private boolean locator = true;
     private boolean health;
     private boolean hunger;
+    private boolean inventory;
     private int tether;
     private boolean starting;
     private int stopArmed = -1;
@@ -119,6 +121,7 @@ final class StartMenu extends LockedMenu {
             stacks[MODE] = Icons.button(Items.CLOCK, 1, "Beat the game: " + Run.clock(), false, "Deaths: " + Run.deaths(server), "Kill the Ender Dragon to win");
             stacks[HEALTH] = healthItem(settings.health(), false, true);
             stacks[HUNGER] = hungerItem(settings.hunger(), false, true);
+            stacks[INVENTORY] = inventoryItem(settings.inventory(), false, true);
             stacks[TETHER] = tetherItem(settings.tether(), false, true);
             stacks[START] = stopItem(server);
         } else {
@@ -134,6 +137,7 @@ final class StartMenu extends LockedMenu {
             }
             stacks[HEALTH] = healthItem(health, true, run);
             stacks[HUNGER] = hungerItem(hunger, true, run);
+            stacks[INVENTORY] = inventoryItem(inventory, true, run);
             stacks[TETHER] = tetherItem(tetherLength(), true, run);
             stacks[START] = run ? runStartItem(server) : startItem(server);
         }
@@ -180,6 +184,21 @@ final class StartMenu extends LockedMenu {
             lore.add(on ? "Click to turn it off" : "Click to turn it on");
         }
         return Icons.toggle(Items.COOKED_BEEF, "Shared hunger: " + (on ? "on" : "off"), on, lore.toArray(String[]::new));
+    }
+
+    private static ItemStack inventoryItem(boolean on, boolean clickable, boolean everyone) {
+        List<String> lore = new ArrayList<>();
+        if (on) {
+            lore.add(everyone ? "Everyone shares one inventory" : "Each team shares one inventory");
+            lore.add("Picking up, using and dropping items counts for everyone");
+            lore.add("A death drops the shared items once");
+        } else {
+            lore.add("Everyone has their own inventory");
+        }
+        if (clickable) {
+            lore.add(on ? "Click to turn it off" : "Click to turn it on");
+        }
+        return Icons.toggle(Items.CHEST, "Shared inventory: " + (on ? "on" : "off"), on, lore.toArray(String[]::new));
     }
 
     private static ItemStack tetherItem(int length, boolean clickable, boolean everyone) {
@@ -275,6 +294,7 @@ final class StartMenu extends LockedMenu {
             case LOCATOR -> flip(2);
             case HEALTH -> flip(3);
             case HUNGER -> flip(4);
+            case INVENTORY -> flip(7);
             case TETHER -> flip(5);
             case START -> pressStart();
             default -> {
@@ -293,6 +313,7 @@ final class StartMenu extends LockedMenu {
             case 3 -> health = !health;
             case 4 -> hunger = !hunger;
             case 5 -> tether = (tether + 1) % (TETHERS.length + 1);
+            case 7 -> inventory = !inventory;
             default -> run = !run;
         }
         draw();
@@ -333,7 +354,7 @@ final class StartMenu extends LockedMenu {
             deny(Datapack.settingUpText(setter));
             return;
         }
-        Links.Settings settings = new Links.Settings(health, hunger, tetherLength());
+        Links.Settings settings = new Links.Settings(health, hunger, inventory, tetherLength());
         starting = true;
         if (run) {
             Run.request(owner, settings);

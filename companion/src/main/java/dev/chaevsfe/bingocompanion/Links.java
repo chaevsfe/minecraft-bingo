@@ -34,16 +34,19 @@ import net.minecraft.world.scores.ScoreHolder;
 import net.minecraft.world.scores.Scoreboard;
 
 final class Links {
-    record Settings(boolean health, boolean hunger, int tether) {
-        static final Settings OFF = new Settings(false, false, 0);
+    record Settings(boolean health, boolean hunger, boolean inventory, int tether) {
+        static final Settings OFF = new Settings(false, false, false, 0);
 
         boolean any() {
-            return health || hunger || tether > 0;
+            return health || hunger || inventory || tether > 0;
         }
 
         boolean linkedDeaths() {
             return health || tether > 0;
         }
+    }
+
+    record Spot(ResourceKey<Level> dimension, Vec3 position) {
     }
 
     static final class Track {
@@ -55,7 +58,7 @@ final class Links {
         int totems;
         ResourceKey<Level> dimension;
         Vec3 position;
-        Set<UUID> pearls = Set.of();
+        Map<UUID, Spot> pearls = Map.of();
         ResourceKey<Level> safeDimension;
         Vec3 safePosition;
     }
@@ -82,6 +85,7 @@ final class Links {
     private static final ScoreHolder HEALTH = ScoreHolder.forNameOnly("health");
     private static final ScoreHolder HUNGER = ScoreHolder.forNameOnly("hunger");
     private static final ScoreHolder TETHER = ScoreHolder.forNameOnly("tether");
+    private static final ScoreHolder INVENTORY = ScoreHolder.forNameOnly("inventory");
     private static final ScoreHolder REGEN = ScoreHolder.forNameOnly("regen");
     private static final int MAX_FOOD = 20;
     private static final int REGEN_FOOD = 18;
@@ -95,12 +99,14 @@ final class Links {
     private static final Map<UUID, Track> TRACKS = new HashMap<>();
     private static final Map<String, Group> GROUPS = new HashMap<>();
     private static final String ORDER = "bingo.order";
+    private static final String PLAYING = "bingo.game.visibility";
     private static final String DOOMED = "bingo.doomed";
     private static final ScoreHolder NEXT = ScoreHolder.forNameOnly("#next");
     private static final float STORED_SCALE = 100.0F;
     private static final Map<UUID, String> GROUP_OF = new HashMap<>();
     private static final Map<UUID, Regen> SOLO = new HashMap<>();
     private static boolean live;
+    private static boolean lastRun;
 
     private Links() {
     }
@@ -109,7 +115,7 @@ final class Links {
         if (server.getScoreboard().getObjective(OBJECTIVE) == null) {
             return Settings.OFF;
         }
-        return new Settings(read(server, HEALTH) == 1, read(server, HUNGER) == 1, Math.max(0, read(server, TETHER)));
+        return new Settings(read(server, HEALTH) == 1, read(server, HUNGER) == 1, read(server, INVENTORY) == 1, Math.max(0, read(server, TETHER)));
     }
 
     private static int read(MinecraftServer server, ScoreHolder holder) {
@@ -126,6 +132,7 @@ final class Links {
         scoreboard.getOrCreatePlayerScore(HEALTH, objective).set(settings.health() ? 1 : 0);
         scoreboard.getOrCreatePlayerScore(HUNGER, objective).set(settings.hunger() ? 1 : 0);
         scoreboard.getOrCreatePlayerScore(TETHER, objective).set(settings.tether());
+        scoreboard.getOrCreatePlayerScore(INVENTORY, objective).set(settings.inventory() ? 1 : 0);
     }
 
     static void clearSettings(MinecraftServer server) {
@@ -139,6 +146,7 @@ final class Links {
             clearSettings(server);
             naturalRegen(server, false);
             forget(server);
+            TeamInventory.clearStored(server);
         }
     }
 
@@ -148,6 +156,7 @@ final class Links {
         GROUP_OF.clear();
         SOLO.clear();
         Tether.clear();
+        TeamInventory.clear();
         live = false;
     }
 
@@ -169,13 +178,16 @@ final class Links {
                 clearSettings(server);
             }
             naturalRegen(server, false);
+            TeamInventory.release(server, lastRun);
             if (live) {
                 forget(server);
             }
             clear(server);
+            TeamInventory.sweep(server);
             return;
         }
         live = true;
+        lastRun = run;
         Settings settings = settings(server);
         boolean ownRegen = naturalRegen(server, settings.health());
         Map<String, List<ServerPlayer>> groups = collect(server, run);
@@ -190,6 +202,20 @@ final class Links {
             }
         }
         TRACKS.keySet().retainAll(seen);
+        if (settings.inventory()) {
+            Map<String, Set<UUID>> members = new HashMap<>();
+            for (Map.Entry<String, List<ServerPlayer>> entry : groups.entrySet()) {
+                Set<UUID> ids = new HashSet<>();
+                for (ServerPlayer player : entry.getValue()) {
+                    ids.add(player.getUUID());
+                }
+                members.put(entry.getKey(), ids);
+            }
+            TeamInventory.sync(server, members, run);
+        } else {
+            TeamInventory.release(server, run);
+        }
+        TeamInventory.sweep(server);
         if (ownRegen) {
             soloRegen(server, seen);
         } else {
@@ -243,7 +269,7 @@ final class Links {
                 }
                 GROUP_OF.put(id, name);
             }
-            if (player.gameMode() == GameType.SURVIVAL && (run || (dealt && Datapack.settingsOpen(player)))) {
+            if (player.gameMode() == GameType.SURVIVAL && (run || (dealt && Datapack.settingsOpen(player) && player.entityTags().contains(PLAYING)))) {
                 groups.computeIfAbsent(name, key -> new ArrayList<>()).add(player);
             }
         }
@@ -327,6 +353,9 @@ final class Links {
             if (doomed(server, player)) {
                 undoom(server, player);
                 if (settings.linkedDeaths()) {
+                    if (settings.inventory()) {
+                        TeamInventory.emptyStale(server, player);
+                    }
                     kill(player);
                     continue;
                 }
@@ -338,20 +367,51 @@ final class Links {
                 arrived.add(player);
             }
         }
+        if (settings.inventory()) {
+            boolean keep = server.getGameRules().get(GameRules.KEEP_INVENTORY);
+            for (ServerPlayer player : alive) {
+                Track track = TRACKS.get(player.getUUID());
+                boolean merge;
+                if (stable.contains(player)) {
+                    merge = false;
+                } else if (track == null) {
+                    merge = !TeamInventory.stale(server, player);
+                } else {
+                    merge = !track.alive && !keep;
+                }
+                TeamInventory.attach(server, name, player, merge);
+            }
+        }
         if (death && settings.linkedDeaths()) {
-            wipe(server, name, group, alive, members, run);
+            wipe(server, name, group, alive, members, run, settings);
             store(server, name, group);
             record(members);
             return;
         }
         if (settings.tether() > 0) {
-            Tether.place(server, name, alive, arrived, TRACKS, settings.tether());
+            Tether.place(server, alive, arrived, TRACKS, settings.tether(), settings.health());
+            List<ServerPlayer> fallen = alive.stream().filter(player -> player.isDeadOrDying()).toList();
+            if (!fallen.isEmpty()) {
+                alive.removeAll(fallen);
+                stable.removeAll(fallen);
+                if (run) {
+                    for (ServerPlayer player : fallen) {
+                        Run.countDeath(server);
+                    }
+                }
+                if (settings.linkedDeaths()) {
+                    wipe(server, name, group, alive, members, run, settings);
+                    store(server, name, group);
+                    record(members);
+                    return;
+                }
+            }
         }
         if (settings.health() && !shareHealth(server, group, alive, stable, ownRegen)) {
             if (run) {
                 Run.countDeath(server);
             }
-            wipe(server, name, group, alive, members, run);
+            wipe(server, name, group, alive, members, run, settings);
             store(server, name, group);
             record(members);
             return;
@@ -359,7 +419,7 @@ final class Links {
         if (settings.hunger()) {
             shareHunger(group, alive, stable);
         }
-        if (settings.tether() > 0 && !Tether.following(name)) {
+        if (settings.tether() > 0) {
             Tether.pull(server, alive, TRACKS, settings.tether());
             if (rope) {
                 Tether.rope(alive, settings.tether(), run ? Icons.TEXT_COLOR : Icons.teamRgb(name));
@@ -369,7 +429,7 @@ final class Links {
         record(members);
     }
 
-    private static void wipe(MinecraftServer server, String name, Group group, List<ServerPlayer> alive, List<ServerPlayer> members, boolean run) {
+    private static void wipe(MinecraftServer server, String name, Group group, List<ServerPlayer> alive, List<ServerPlayer> members, boolean run, Settings settings) {
         for (ServerPlayer player : alive) {
             kill(player);
         }
@@ -596,8 +656,8 @@ final class Links {
             track.totems = totems(player);
             track.dimension = player.level().dimension();
             track.position = player.position();
-            Set<UUID> pearls = new HashSet<>();
-            player.getEnderPearls().forEach(pearl -> pearls.add(pearl.getUUID()));
+            Map<UUID, Spot> pearls = new HashMap<>();
+            player.getEnderPearls().forEach(pearl -> pearls.put(pearl.getUUID(), new Spot(pearl.level().dimension(), pearl.position())));
             track.pearls = pearls;
             if (Tether.safe(player)) {
                 track.safeDimension = track.dimension;

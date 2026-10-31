@@ -9,6 +9,10 @@ base {
     archivesName = project.archives_base_name
 }
 
+loom {
+    accessWidenerPath = file("src/main/resources/bingo_companion.accesswidener")
+}
+
 repositories {
     mavenCentral()
     maven { url 'https://maven.fabricmc.net/' }

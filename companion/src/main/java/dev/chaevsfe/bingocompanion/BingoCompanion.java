@@ -35,6 +35,8 @@ public final class BingoCompanion implements ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPED.register(StartMenu::clear);
         ServerLifecycleEvents.SERVER_STOPPED.register(Lobby::clear);
         ServerLifecycleEvents.SERVER_STOPPED.register(LobbyItem::clear);
+        ServerLifecycleEvents.SERVER_STOPPING.register(TeamInventory::save);
+        ServerLifecycleEvents.BEFORE_SAVE.register((server, flush, force) -> TeamInventory.save(server));
         ServerLifecycleEvents.SERVER_STOPPED.register(Run::clear);
         ServerLifecycleEvents.SERVER_STOPPED.register(Links::clear);
         ServerLifecycleEvents.SERVER_STOPPED.register(WorldReset::stopped);
