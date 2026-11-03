@@ -1,11 +1,11 @@
-# Minecraft Bingo for 26.3
+# Minecraft Bingo
 
 [![Release](https://img.shields.io/github/v/release/chaevsfe/minecraft-bingo)](https://github.com/chaevsfe/minecraft-bingo/releases/latest)
 ![Minecraft](https://img.shields.io/badge/Minecraft-26.3-brightgreen)
 ![Fabric](https://img.shields.io/badge/loader-Fabric-dbd0b4)
 [![License](https://img.shields.io/github/license/chaevsfe/minecraft-bingo)](LICENSE)
 
-Minecraft Bingo for 26.3 is a Bingo datapack and resource pack for vanilla Minecraft 26.3, plus **Bingo Companion**, a server-side Fabric mod that replaces chat commands with chest menus. Players join with a vanilla client and only need the resource pack.
+A Bingo datapack and resource pack for vanilla Minecraft 26.3, plus **Bingo Companion**, a server-side Fabric mod that replaces chat commands with chest menus. Players join with a vanilla client and only need the resource pack.
 
 ## Features
 
